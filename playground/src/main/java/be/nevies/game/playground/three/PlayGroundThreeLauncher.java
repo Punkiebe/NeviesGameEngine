@@ -21,9 +21,9 @@ public class PlayGroundThreeLauncher extends Application {
     public void start(Stage stage) throws Exception {
         GameController controller = new PlayGroundThree(stage, 60, "PlayGroundThree - test SoundManager", 600, 600);
         controller.initialise();
-        //controller.startGameUpdateTimeline();
+        controller.startGameUpdateTimeline();
         stage.show();
-        //ScenicView.show(stage.getScene());
+        ScenicView.show(stage.getScene());
     }
     
     public static void main(String[] args) {
