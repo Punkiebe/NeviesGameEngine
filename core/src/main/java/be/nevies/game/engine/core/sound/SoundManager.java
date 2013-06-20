@@ -1,11 +1,20 @@
 package be.nevies.game.engine.core.sound;
 
+import be.nevies.game.engine.core.collision.Direction;
+import be.nevies.game.engine.core.collision.PointPosition;
+import be.nevies.game.engine.core.collision.PositionUtil;
+import be.nevies.game.engine.core.collision.RectangleUtil;
 import be.nevies.game.engine.core.general.Element;
+import be.nevies.game.engine.core.sound.SoundElement.Status;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.geometry.Point2D;
+import javafx.scene.Group;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
+import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,12 +30,33 @@ public final class SoundManager {
     private Map<String, SoundElement> soundMap;
     private Element mainElement;
     private static boolean checkingCollision = false;
+    private Group soundGroup;
 
     /**
      * Default constructor.
      */
     private SoundManager() {
         soundMap = new HashMap<>();
+        soundGroup = new Group();
+        soundGroup.setId("SoundAreaLayer");
+    }
+
+    /**
+     * Before you can use the SoundManager you need to initialise the SoundManager. This can be done by calling this method.
+     *
+     * @param mainGameNode Your main game node.
+     */
+    public static void initialise(Group mainGameNode) {
+        if (mainGameNode == null) {
+            throw new IllegalArgumentException("The main game node can't be null!");
+        }
+        if (instance != null) {
+            LOG.error("The SoundManager is already initialised");
+            return;
+        }
+        instance = new SoundManager();
+        mainGameNode.getChildren().add(instance.soundGroup);
+        LOG.info("Sound manager is initialised.");
     }
 
     /**
@@ -34,7 +64,7 @@ public final class SoundManager {
      */
     public static SoundManager getInstance() {
         if (instance == null) {
-            instance = new SoundManager();
+            throw new IllegalAccessError("Please call first the static 'init' method before getting the first instance.");
         }
         return instance;
     }
@@ -120,11 +150,137 @@ public final class SoundManager {
         }
         checkingCollision = true;
         try {
+            if (getInstance().mainElement == null) {
+                LOG.error("Can't check for collisions without a Main Element! Set the main element in the SoundManager.");
+                return;
+            }
+            if (!getInstance().mainElement.hasCollisionBounds()) {
+                LOG.error("The main element needs to have collision bounds! Add at least one collision bound to your element!");
+                return;
+            }
+            Collection<Rectangle> mainBounds = getInstance().mainElement.getCollisionBounds();
             // check for collisions
+            Collection<SoundElement> values = getInstance().soundMap.values();
+            for (SoundElement sound : values) {
+                if (!sound.hasSoundArea()) {
+                    // If there's no sound area no way to check for a collision.
+                    continue;
+                }
+                boolean intersects = false;
+                Rectangle intersectRec = null;
+                for (Rectangle bound : mainBounds) {
+                    intersects = bound.getBoundsInParent().intersects(sound.getSoundArea().getBoundsInParent());
+                    if (intersects) {
+                        intersectRec = new Rectangle(bound.getBoundsInParent().getMinX(), bound.getBoundsInParent().getMinY(),
+                                bound.getBoundsInParent().getWidth(), bound.getBoundsInParent().getHeight());
+                        break;
+                    }
+                }
+                if (intersects && sound.isBalanceDirectionBased()) {
+                    // Change the balance base on the direction.
+                    Point2D areaOne = RectangleUtil.pointOnRectangle(sound.getSoundArea(), Direction.TOP);
+                    Point2D areaTwo = RectangleUtil.pointOnRectangle(sound.getSoundArea(), Direction.BOTTOM);
+                    Point2D areaCenter = RectangleUtil.pointOnRectangle(sound.getSoundArea(), Direction.CENTER);
+                    Point2D intersectPt = RectangleUtil.pointOnRectangle(intersectRec, Direction.CENTER);
+                    PointPosition position = PositionUtil.getPointPositionTowardsLine(areaOne, areaTwo, intersectPt);
+                    double distance;
+                    double percen;
+                    switch (position) {
+                        case ON:
+                            sound.setBalance(0.0);
+                            break;
+                        case LEFT:
+                            distance = PositionUtil.getDistanceBetweenTwoPoints(areaCenter, intersectPt);
+                            percen = calculatePercentageFromDistance(intersectRec, sound.getSoundArea(), distance);
+                            sound.setBalance(1.0 - percen);
+                            break;
+                        case RIGHT:
+                            distance = PositionUtil.getDistanceBetweenTwoPoints(areaCenter, intersectPt);
+                            percen = calculatePercentageFromDistance(intersectRec, sound.getSoundArea(), distance);
+                            sound.setBalance(-(1.0 - percen));
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                    LOG.debug("The balance is now : {}", sound.getBalance());
+                }
+                if (intersects && sound.isVolumeDistanceBased()) {
+                    // Change the volume based on the distance.
+                    Point2D areaCenter = RectangleUtil.pointOnRectangle(sound.getSoundArea(), Direction.CENTER);
+                    Point2D intersectPt = RectangleUtil.pointOnRectangle(intersectRec, Direction.CENTER);
+                    double distance = PositionUtil.getDistanceBetweenTwoPoints(areaCenter, intersectPt);
+                    sound.setVolume(calculatePercentageFromDistance(intersectRec, sound.getSoundArea(), distance));
+                    LOG.debug("The volume is now : {}", sound.getVolume());
+                }
+                if (intersects) {
+                    sound.play();
+                    LOG.debug("Start playing the sound : {}", sound.toString());
+                } else {
+                    if (sound.getStatus() == Status.PLAYING) {
+                        sound.stop();
+                    }
+                }
+            }
         } catch (RuntimeException rte) {
             LOG.error("There where problems while checken for collisions.", rte);
         } finally {
             checkingCollision = false;
         }
+    }
+
+    /**
+     * This method only works if the two rectangles intersect each other.
+     *
+     * @param recOne First rectangle.
+     * @param recTwo Second rectangle
+     * @param distance The distance.
+     * @return The percentage based on distance. 0.0 means there the furthest away. 1.0 means there on top of each other.
+     */
+    private static double calculatePercentageFromDistance(Rectangle recOne, Rectangle recTwo, double distance) {
+        if (recOne == null || recTwo == null) {
+            throw new IllegalArgumentException("The rectangles can't be null!");
+        }
+        double max = getMaximumDistance(recOne, recTwo);
+
+        if (max == distance) {
+            return 0.0;
+        }
+        double percent = (max - distance) / max;
+        LOG.debug("Calculating percentage for distance. Max : {} , Distance : {} , Percentage : {}", max, distance, percent);
+        return percent;
+    }
+
+    /**
+     * Get the maximum distance between two rectangles that intersect.
+     *
+     * @param recOne First rectangle.
+     * @param recTwo Second rectangle.
+     * @return The distance between them.
+     */
+    private static double getMaximumDistance(Rectangle recOne, Rectangle recTwo) {
+        Rectangle newOne = new Rectangle(0, 0, recOne.getWidth(), recOne.getHeight());
+        Rectangle newTwo = new Rectangle(recOne.getWidth(), recOne.getHeight(), recTwo.getWidth(), recTwo.getHeight());
+        Point2D centerOne = RectangleUtil.pointOnRectangle(newOne, Direction.CENTER);
+        Point2D centerTwo = RectangleUtil.pointOnRectangle(newTwo, Direction.CENTER);
+        return PositionUtil.getDistanceBetweenTwoPoints(centerOne, centerTwo);
+    }
+
+    /**
+     * Add the sound element to the sound group. This is needed to make sure the Element is know by the scene. This is only needed for SoundElement that have a
+     * sound area.
+     *
+     * @param sound The sound element.
+     */
+    protected static void addSoundElementToSoundGroup(SoundElement sound) {
+        getInstance().soundGroup.getChildren().add(sound.getSoundArea());
+    }
+
+    /**
+     * Remove a sound element from the sound group.
+     *
+     * @param sound The sound element.
+     */
+    protected static void removeSoundElementFromSoundGroup(SoundElement sound) {
+        getInstance().soundGroup.getChildren().remove(sound.getSoundArea());
     }
 }

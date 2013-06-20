@@ -5,6 +5,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.scene.media.AudioClip;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -137,6 +138,13 @@ public class SoundElement {
     }
 
     /**
+     * @return Get the current volume for this sound element.
+     */
+    public double getVolume() {
+        return volumeProperty.doubleValue();
+    }
+
+    /**
      * Set the volume of the sound element.
      *
      * @param volume The volume at which the media should be played. The range of effective values is [0.0 1.0] where 0.0 is inaudible and 1.0 is full volume,
@@ -147,51 +155,144 @@ public class SoundElement {
     }
 
     /**
+     * @return Get the current balance for this sound element.
+     */
+    public double getBalance() {
+        return balanceProperty.doubleValue();
+    }
+
+    /**
      * @param balance Set the balance for this sound element. Balance is the relative left and right volume levels of the sound element.
      */
     public void setBalance(double balance) {
         balanceProperty.setValue(balance);
     }
-    
+
+    /**
+     * @return The SoundArea for this SoundElement.
+     */
+    public Rectangle getSoundArea() {
+        return soundArea;
+    }
+
     /**
      * @param area The area you want the sound to be played. Set to null if you want to remove the area.
      */
     public void setSoundArea(Rectangle area) {
-        soundArea = area;
+        if (area == null) {
+            SoundManager.removeSoundElementFromSoundGroup(this);
+            soundArea = null;
+        } else {
+            soundArea = area;
+            SoundManager.addSoundElementToSoundGroup(this);
+        }
     }
-    
+
     /**
      * @return True if this sound element has a sound area.
      */
     public boolean hasSoundArea() {
         return soundArea == null ? false : true;
     }
-    
+
     /**
-     * @param distanceBased Set true or false if you want that the balance is based on the distance of your main element and the sound area. This can't work without a sound area!
+     * @param distanceBased Set true or false if you want that the balance is based on the distance of your main element and the sound area. This can't work
+     * without a sound area!
      */
     public void setVolumeDistanceBased(boolean distanceBased) {
         volumeDistanceBased = distanceBased;
     }
-    
+
     /**
      * @return Tells if the volume is balanced around the distance.
      */
     public boolean isVolumeDistanceBased() {
         return volumeDistanceBased;
     }
-    
+
     /**
-     * @param directionBased 
+     * @param directionBased Set to true if you want the SoundElement to base the balance on the direction to worths the center of the play area.
      */
     public void setBalanceDirectionBased(boolean directionBased) {
         balanceDirectionBased = directionBased;
     }
-    
+
     /**
      * @return Tells if the balance is based on the direction.
      */
     public boolean isBalanceDirectionBased() {
         return balanceDirectionBased;
+    }
+
+    /**
+     * Show the sound area.
+     */
+    public void showSoundArea() {
+        soundArea.setVisible(true);
+        soundArea.setOpacity(0.5);
+        soundArea.setFill(Color.BLUE);
+    }
+
+    /**
+     * Tells if the sound is playing, paused or stopped.
+     *
+     * @return The status of the sound.
+     */
+    public Status getStatus() {
+        switch (soundType) {
+            case AUDIOCLIP:
+                if (soundClip.isPlaying()) {
+                    return Status.PLAYING;
+                } else {
+                    return Status.STOPPED;
+                }
+            case MEDIA:
+                javafx.scene.media.MediaPlayer.Status st = soundMedia.getStatus();
+                if (st == javafx.scene.media.MediaPlayer.Status.PLAYING) {
+                    return Status.PLAYING;
+                } else if (st == javafx.scene.media.MediaPlayer.Status.STOPPED) {
+                    return Status.STOPPED;
+                } else if (st == javafx.scene.media.MediaPlayer.Status.PAUSED) {
+                    return Status.PAUSED;
+                } else {
+                    return Status.UNKNOW;
+                }
+            default:
+                throw new IllegalAccessError("You shouldn't be able to call this method if no AudioClip or MediaPlayer is set!!");
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        switch (soundType) {
+            case AUDIOCLIP:
+                builder.append("AudioClip : ");
+                builder.append("[Soure : ").append(soundClip.getSource()).append("]");
+                builder.append("[Volume : ").append(soundClip.getVolume()).append("]");
+                builder.append("[Balance : ").append(soundClip.getBalance()).append("]");
+                builder.append("[CycleCount : ").append(soundClip.getCycleCount()).append("]");
+                builder.append("[HasSoundArea : ").append(hasSoundArea()).append("]");
+                break;
+            case MEDIA:
+                builder.append("Media : ");
+                builder.append("[Soure : ").append(soundMedia.getMedia().getSource()).append("]");
+                builder.append("[Volume : ").append(soundMedia.getVolume()).append("]");
+                builder.append("[Balance : ").append(soundMedia.getBalance()).append("]");
+                builder.append("[CycleCount : ").append(soundMedia.getCycleCount()).append("]");
+                builder.append("[HasSoundArea : ").append(hasSoundArea()).append("]");
+                break;
+            default:
+                builder.append(super.toString());
+        }
+        return builder.toString();
+    }
+
+    /**
+     * Tells in what status the sound is.
+     */
+    public enum Status {
+
+        PLAYING, STOPPED, PAUSED, UNKNOW;
     }
 }

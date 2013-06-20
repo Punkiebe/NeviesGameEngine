@@ -146,7 +146,7 @@ public final class CollisionManager {
             for (Rectangle boundTwo : boundsTwo) {
                 boolean intersects = boundOne.getBoundsInParent().intersects(boundTwo.getBoundsInParent());
                 if (intersects) {
-                    Direction direction = CollisionPositionUtil.getDirectionOfTwoCollidedElements(boundTwo.getBoundsInParent(), boundOne.getBoundsInParent());
+                    Direction direction = PositionUtil.getDirectionOfTwoCollidedElements(boundTwo.getBoundsInParent(), boundOne.getBoundsInParent());
                     return ReturnObjectCheckBounds.collisionResponsTrue(direction);
                 }
             }

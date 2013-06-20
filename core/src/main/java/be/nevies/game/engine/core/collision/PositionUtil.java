@@ -6,19 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is an util class that helps to determine the position of two Bounds towards each other.
+ * This is an utility class that helps to determine the position of two Bounds towards each other.
  *
  * @author drs
  */
-public final class CollisionPositionUtil {
+public final class PositionUtil {
 
     /* Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(CollisionPositionUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PositionUtil.class);
 
     /**
      * Default constructor.
      */
-    private CollisionPositionUtil() {
+    private PositionUtil() {
     }
 
     /**
@@ -50,6 +50,35 @@ public final class CollisionPositionUtil {
         }
 
         throw new IllegalStateException("This can never happen!!");
+    }
+
+    /**
+     * This method gives you the distance between two points.
+     *
+     * @param one First point.
+     * @param two Second point.
+     * @return The distance between the two points.
+     */
+    public static double getDistanceBetweenTwoPoints(Point2D one, Point2D two) {
+        if (one == null || two == null) {
+            throw new IllegalArgumentException("The give points can't be null to determin the distance between them.");
+        }
+        LOG.debug("Distance for point one : {} and two : {}", one, two);
+        return Math.sqrt((one.getX() - two.getX()) * (one.getX() - two.getX()) + (one.getY() - two.getY()) * (one.getY() - two.getY()));
+    }
+
+    /**
+     * This method gives you the middle point between two points.
+     *
+     * @param one First point.
+     * @param Second point.
+     * @return The middle point between two points.
+     */
+    public static Point2D getMiddlePointBetweenTwoPoints(Point2D one, Point2D two) {
+        if (one == null || two == null) {
+            throw new IllegalArgumentException("The give points can't be null to determin the middle point between them.");
+        }
+        return new Point2D((one.getX() + two.getX()) / 2, (one.getY() + two.getY()) / 2);
     }
 
     /**
