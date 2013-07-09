@@ -1,5 +1,7 @@
 package be.nevies.game.engine.core.sound;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.scene.media.AudioClip;
@@ -30,7 +32,7 @@ public class SoundElement {
     private Rectangle soundArea;
     private boolean volumeDistanceBased;
     private boolean balanceDirectionBased;
-
+    
     /**
      * Use this constructor if you want to create a SoundElement based on the AudioClip format. Mostly used for smaller audio fragments, like sound effects.
      *

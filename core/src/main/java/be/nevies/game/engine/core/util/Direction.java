@@ -1,4 +1,4 @@
-package be.nevies.game.engine.core.collision;
+package be.nevies.game.engine.core.util;
 
 /**
  * The different directions.

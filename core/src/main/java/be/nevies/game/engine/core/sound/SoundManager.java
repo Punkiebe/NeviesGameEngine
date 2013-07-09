@@ -1,15 +1,17 @@
 package be.nevies.game.engine.core.sound;
 
-import be.nevies.game.engine.core.collision.Direction;
-import be.nevies.game.engine.core.collision.PointPosition;
-import be.nevies.game.engine.core.collision.PositionUtil;
-import be.nevies.game.engine.core.collision.RectangleUtil;
 import be.nevies.game.engine.core.general.Element;
 import be.nevies.game.engine.core.sound.SoundElement.Status;
+import be.nevies.game.engine.core.util.Direction;
+import be.nevies.game.engine.core.util.PointPosition;
+import be.nevies.game.engine.core.util.PositionUtil;
+import be.nevies.game.engine.core.util.RectangleUtil;
+import be.nevies.game.engine.core.util.SingleExecutorService;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.FutureTask;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.media.AudioClip;
@@ -31,6 +33,7 @@ public final class SoundManager {
     private Element mainElement;
     private static boolean checkingCollision = false;
     private Group soundGroup;
+    private static SingleExecutorService soundCheckService;
 
     /**
      * Default constructor.
@@ -39,6 +42,7 @@ public final class SoundManager {
         soundMap = new HashMap<>();
         soundGroup = new Group();
         soundGroup.setId("SoundAreaLayer");
+        soundCheckService = new SingleExecutorService();
     }
 
     /**
@@ -139,11 +143,32 @@ public final class SoundManager {
     }
 
     /**
-     * This will check the main element against all the SoundElements that have a sound area. If there's a collision with a SoundElement the sound we'l be
+     * A static call to the checkForCollisions method.
+     */
+    public static void staticCheckForCollisions() {
+        getInstance().checkForCollisions();
+    }
+
+    /**
+     * This will check the main element against all the SoundElements that have a sound area. If there's a collision with a SoundElement the sound well be
      * played. And if the 'volumeDistanceBased' is true then it we'll adapt the volume based on the distance oft he main element to the center of the sound
      * area.
      */
-    public static void checkForCollisions() {
+    public void checkForCollisions() {
+        soundCheckService.submit(new CheckForCollisionsTask(getInstance().mainElement.getCollisionBounds(), getInstance().soundMap.values()));
+    }
+    
+    /**
+     * Stops collision checking.
+     */
+    public void stopCollisionCheck() {
+        soundCheckService.shutdown();
+    }
+
+    /**
+     * Same as checkForCollisions but without threads.
+     */
+    private static void innerCheckForCollisions() {
         if (checkingCollision) {
             LOG.info("Already checking for collisions, this call we'll be ignored!!");
             return;
@@ -202,7 +227,7 @@ public final class SoundManager {
                         default:
                             throw new AssertionError();
                     }
-                    LOG.debug("The balance is now : {}", sound.getBalance());
+                    LOG.trace("The balance is now : {}", sound.getBalance());
                 }
                 if (intersects && sound.isVolumeDistanceBased()) {
                     // Change the volume based on the distance.
@@ -210,14 +235,17 @@ public final class SoundManager {
                     Point2D intersectPt = RectangleUtil.pointOnRectangle(intersectRec, Direction.CENTER);
                     double distance = PositionUtil.getDistanceBetweenTwoPoints(areaCenter, intersectPt);
                     sound.setVolume(calculatePercentageFromDistance(intersectRec, sound.getSoundArea(), distance));
-                    LOG.debug("The volume is now : {}", sound.getVolume());
+                    LOG.trace("The volume is now : {}", sound.getVolume());
                 }
                 if (intersects) {
-                    sound.play();
-                    LOG.debug("Start playing the sound : {}", sound.toString());
+                    if (sound.getStatus() != Status.PLAYING) {
+                        sound.play();
+                        LOG.debug("Start playing the sound : {}", sound.toString());
+                    }
                 } else {
                     if (sound.getStatus() == Status.PLAYING) {
                         sound.stop();
+                        LOG.debug("Stop playing the sound : {}", sound.toString());
                     }
                 }
             }
@@ -246,7 +274,7 @@ public final class SoundManager {
             return 0.0;
         }
         double percent = (max - distance) / max;
-        LOG.debug("Calculating percentage for distance. Max : {} , Distance : {} , Percentage : {}", max, distance, percent);
+        LOG.trace("Calculating percentage for distance. Max : {} , Distance : {} , Percentage : {}", max, distance, percent);
         return percent;
     }
 
@@ -282,5 +310,82 @@ public final class SoundManager {
      */
     protected static void removeSoundElementFromSoundGroup(SoundElement sound) {
         getInstance().soundGroup.getChildren().remove(sound.getSoundArea());
+    }
+
+    /**
+     * Inner class that creates an object of FutureTask.
+     */
+    private class CheckForCollisionsTask extends FutureTask<Void> {
+
+        public CheckForCollisionsTask(final Collection<Rectangle> mainElementBounds, final Collection<SoundElement> soundElements) {
+            super(new Runnable() {
+                @Override
+                public void run() {
+                    for (SoundElement sound : soundElements) {
+                        if (!sound.hasSoundArea()) {
+                            // If there's no sound area no way to check for a collision.
+                            continue;
+                        }
+                        boolean intersects = false;
+                        Rectangle intersectRec = null;
+                        for (Rectangle bound : mainElementBounds) {
+                            intersects = bound.getBoundsInParent().intersects(sound.getSoundArea().getBoundsInParent());
+                            if (intersects) {
+                                intersectRec = new Rectangle(bound.getBoundsInParent().getMinX(), bound.getBoundsInParent().getMinY(),
+                                        bound.getBoundsInParent().getWidth(), bound.getBoundsInParent().getHeight());
+                                break;
+                            }
+                        }
+                        if (intersects && sound.isBalanceDirectionBased()) {
+                            // Change the balance base on the direction.
+                            Point2D areaOne = RectangleUtil.pointOnRectangle(sound.getSoundArea(), Direction.TOP);
+                            Point2D areaTwo = RectangleUtil.pointOnRectangle(sound.getSoundArea(), Direction.BOTTOM);
+                            Point2D areaCenter = RectangleUtil.pointOnRectangle(sound.getSoundArea(), Direction.CENTER);
+                            Point2D intersectPt = RectangleUtil.pointOnRectangle(intersectRec, Direction.CENTER);
+                            PointPosition position = PositionUtil.getPointPositionTowardsLine(areaOne, areaTwo, intersectPt);
+                            double distance;
+                            double percen;
+                            switch (position) {
+                                case ON:
+                                    sound.setBalance(0.0);
+                                    break;
+                                case LEFT:
+                                    distance = PositionUtil.getDistanceBetweenTwoPoints(areaCenter, intersectPt);
+                                    percen = calculatePercentageFromDistance(intersectRec, sound.getSoundArea(), distance);
+                                    sound.setBalance(1.0 - percen);
+                                    break;
+                                case RIGHT:
+                                    distance = PositionUtil.getDistanceBetweenTwoPoints(areaCenter, intersectPt);
+                                    percen = calculatePercentageFromDistance(intersectRec, sound.getSoundArea(), distance);
+                                    sound.setBalance(-(1.0 - percen));
+                                    break;
+                                default:
+                                    throw new AssertionError();
+                            }
+                            LOG.trace("The balance is now : {}", sound.getBalance());
+                        }
+                        if (intersects && sound.isVolumeDistanceBased()) {
+                            // Change the volume based on the distance.
+                            Point2D areaCenter = RectangleUtil.pointOnRectangle(sound.getSoundArea(), Direction.CENTER);
+                            Point2D intersectPt = RectangleUtil.pointOnRectangle(intersectRec, Direction.CENTER);
+                            double distance = PositionUtil.getDistanceBetweenTwoPoints(areaCenter, intersectPt);
+                            sound.setVolume(calculatePercentageFromDistance(intersectRec, sound.getSoundArea(), distance));
+                            LOG.trace("The volume is now : {}", sound.getVolume());
+                        }
+                        if (intersects) {
+                            if (sound.getStatus() != Status.PLAYING) {
+                                sound.play();
+                                LOG.debug("Start playing the sound : {}", sound.toString());
+                            }
+                        } else {
+                            if (sound.getStatus() == Status.PLAYING) {
+                                sound.stop();
+                                LOG.debug("Stop playing the sound : {}", sound.toString());
+                            }
+                        }
+                    }
+                }
+            }, null);
+        }
     }
 }

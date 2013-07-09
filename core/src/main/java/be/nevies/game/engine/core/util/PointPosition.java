@@ -1,4 +1,4 @@
-package be.nevies.game.engine.core.collision;
+package be.nevies.game.engine.core.util;
 
 /**
  * The position of a point to worths a line.

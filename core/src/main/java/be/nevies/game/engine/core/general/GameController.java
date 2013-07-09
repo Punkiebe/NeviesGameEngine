@@ -41,24 +41,30 @@ public abstract class GameController {
     /* The Timeline that handles the game updates. It fires the GameEvent 'GAME_UPDATE_EVENT' and calls the method handleGameUpdate. */
     private static Timeline gameUpdateTimeline;
     /* Number of game updates per second. */
-    private final int updatePerSecond;
+    private final int gameUpdatesPerSecond;
+    /* The Timeline that handles the sound updates. It will call the method handleSoundUpdate. */
+    private static Timeline soundUpdateTimeline;
+    /* Number of sound updates per second. */
+    private final int soundUpdatesPerSecond;
 
     /**
      * Constructor that will create a game scene with a Group node attached to it and add this scene to the given stage. It will also create the game update
-     * time line, but doesn't start it yet!
+     * time line, but doesn't start it yet! It creates the Sound updates time line, but doesn't start it yet!
      *
      * @param stage The stage of this game.
-     * @param ups Update per second.
+     * @param gups Game updates per second.
+     * @param sups Sound updates per second.
      * @param title Title of the games window.
      * @param widthWindow Width of the game window.
      * @param heightWindow Height of the game window.
      */
-    public GameController(Stage stage, int ups, String title, double widthWindow, double heightWindow) {
+    public GameController(Stage stage, int gups, int sups, String title, double widthWindow, double heightWindow) {
         if (stage == null) {
             throw new IllegalArgumentException("The given Stage was null!! Stage can't be null to create a GameController.");
         }
         gameStage = stage;
-        updatePerSecond = ups;
+        gameUpdatesPerSecond = gups;
+        soundUpdatesPerSecond = sups;
         gameTitle = title;
 
         gameMainNode = new Group();
@@ -69,13 +75,14 @@ public abstract class GameController {
         gameStage.setScene(gameScene);
 
         initialiseGameUpdateTimeline();
+        initialiseSoundUpdateTimeline();
     }
 
     /**
      * Initialise the game update time line.
      */
     private void initialiseGameUpdateTimeline() {
-        final Duration oneFrameAmt = Duration.millis(1000 / (float) getUpdatePerSecond());
+        final Duration oneFrameAmt = Duration.millis(1000 / (float) getGameUpdatesPerSecond());
         final KeyFrame oneFrame = new KeyFrame(oneFrameAmt,
                 new EventHandler<ActionEvent>() {
                     @Override
@@ -89,6 +96,22 @@ public abstract class GameController {
     }
 
     /**
+     * Initialise the sound update time line.
+     */
+    private void initialiseSoundUpdateTimeline() {
+        final Duration oneFrameAmt = Duration.millis(1000 / (float) getSoundUpdatesPerSecond());
+        final KeyFrame oneFrame = new KeyFrame(oneFrameAmt,
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(javafx.event.ActionEvent event) {
+                        handleSoundUpdate();
+                    }
+                });
+
+        soundUpdateTimeline = TimelineBuilder.create().cycleCount(Animation.INDEFINITE).keyFrames(oneFrame).build();
+    }
+
+    /**
      * Initialise the rest of your game. This method you need to call once the GameController is created.
      */
     public abstract void initialise();
@@ -98,6 +121,13 @@ public abstract class GameController {
      */
     protected void handleGameUpdate() {
         // Overide if you want to execute game updates in the game time line.
+    }
+
+    /**
+     * This method is called each time a sound update is done.
+     */
+    protected void handleSoundUpdate() {
+        // Overide if you wan to execute sound updates in the sound update time line calls.
     }
 
     /**
@@ -122,12 +152,42 @@ public abstract class GameController {
     }
 
     /**
-     * Returns the updates per second.
-     *
-     * @return The updates per second.
+     * Start the time line that calls the 'handleSoundUpdate'.
      */
-    protected int getUpdatePerSecond() {
-        return updatePerSecond;
+    public void startSoundUpdateTimeline() {
+        soundUpdateTimeline.play();
+    }
+
+    /**
+     * Pause the sound update time line.
+     */
+    public void pauseSoundUpdateTimeline() {
+        soundUpdateTimeline.pause();
+    }
+
+    /**
+     * Stop the sound update time line.
+     */
+    public void stopSoundUpdateTimeline() {
+        soundUpdateTimeline.stop();
+    }
+
+    /**
+     * Returns the game updates per second.
+     *
+     * @return The game updates per second.
+     */
+    protected int getGameUpdatesPerSecond() {
+        return gameUpdatesPerSecond;
+    }
+
+    /**
+     * Returns the sound updates per second.
+     *
+     * @return The sound updates per second.
+     */
+    protected int getSoundUpdatesPerSecond() {
+        return soundUpdatesPerSecond;
     }
 
     /**

@@ -1,5 +1,7 @@
 package be.nevies.game.engine.core.collision;
 
+import be.nevies.game.engine.core.util.Direction;
+import be.nevies.game.engine.core.util.PositionUtil;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.Element;

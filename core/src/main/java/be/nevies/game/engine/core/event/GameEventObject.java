@@ -1,6 +1,6 @@
 package be.nevies.game.engine.core.event;
 
-import be.nevies.game.engine.core.collision.Direction;
+import be.nevies.game.engine.core.util.Direction;
 import be.nevies.game.engine.core.general.Element;
 
 /**

@@ -1,4 +1,4 @@
-package be.nevies.game.engine.core.collision;
+package be.nevies.game.engine.core.util;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
@@ -63,7 +63,7 @@ public final class PositionUtil {
         if (one == null || two == null) {
             throw new IllegalArgumentException("The give points can't be null to determin the distance between them.");
         }
-        LOG.debug("Distance for point one : {} and two : {}", one, two);
+        LOG.trace("Distance for point one : {} and two : {}", one, two);
         return Math.sqrt((one.getX() - two.getX()) * (one.getX() - two.getX()) + (one.getY() - two.getY()) * (one.getY() - two.getY()));
     }
 

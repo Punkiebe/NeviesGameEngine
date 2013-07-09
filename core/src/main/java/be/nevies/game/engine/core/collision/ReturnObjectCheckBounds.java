@@ -1,5 +1,7 @@
 package be.nevies.game.engine.core.collision;
 
+import be.nevies.game.engine.core.util.Direction;
+
 /**
  * This object is used to return the result of a collision check from the CollisionManager.
  *
