@@ -5,7 +5,7 @@
 package be.nevies.game.playground.one;
 
 import be.nevies.game.engine.core.collision.CollisionManager;
-import be.nevies.game.engine.core.collision.Direction;
+import be.nevies.game.engine.core.util.Direction;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.BehaviourType;

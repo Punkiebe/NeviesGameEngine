@@ -35,8 +35,8 @@ public class PlayGroundTwo extends GameController {
 
     private final static Label NUM_SPRITES_FIELD = new Label();
 
-    public PlayGroundTwo(Stage stage, int ups, String title, double widthWindow, double heightWindow) {
-        super(stage, ups, title, widthWindow, heightWindow);
+    public PlayGroundTwo(Stage stage, int gups, int sups, String title, double widthWindow, double heightWindow) {
+        super(stage, gups, sups, title, widthWindow, heightWindow);
     }
 
     @Override

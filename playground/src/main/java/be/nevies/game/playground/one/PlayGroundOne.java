@@ -4,17 +4,27 @@
  */
 package be.nevies.game.playground.one;
 
+import be.nevies.game.engine.core.animation.PathElement;
 import be.nevies.game.engine.core.animation.SpriteAnimation;
 import be.nevies.game.engine.core.animation.SpriteAnimationBuilder;
 import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.graphic.Sprite;
+import javafx.animation.PathTransition;
+import javafx.animation.PathTransitionBuilder;
+import javafx.animation.Timeline;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.CubicCurveTo;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.PathBuilder;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -26,8 +36,8 @@ public class PlayGroundOne extends GameController {
 
     PlayerOne player = new PlayerOne();
 
-    public PlayGroundOne(Stage stage, int ups, String title, double widthWindow, double heightWindow) {
-        super(stage, ups, title, widthWindow, heightWindow);
+    public PlayGroundOne(Stage stage, int gups, int sups, String title, double widthWindow, double heightWindow) {
+        super(stage, gups, sups, title, widthWindow, heightWindow);
     }
 
     @Override
@@ -68,6 +78,42 @@ public class PlayGroundOne extends GameController {
         Sprite spriteGeorge = new Sprite(16, 4, 48, 48, imageView);
         SpriteAnimation build = SpriteAnimationBuilder.create(spriteGeorge).columns(1).totalNbrFrames(4).duration(Duration.seconds(5)).build();
         build.play();
+        
+        
+        Path path = PathBuilder.create()
+                .elements(
+                    new MoveTo(50,50),
+                    new CubicCurveTo(380, 0, 380, 120, 200, 120),
+                    new CubicCurveTo(0, 120, 0, 240, 380, 240)
+                )
+                .build();
+        path.setStroke(Color.DODGERBLUE);
+        path.getStrokeDashArray().setAll(5d,5d);
+        
+        PathElement pathEl = new PathElement(new Path(new MoveTo(100, 200)), getGameMainNode());
+        
+        //pathEl.addPathElement(new LineTo(100, 200));
+        
+       // pathEl.addPathElement(new MoveTo(100, 200));
+        pathEl.setLayoutX(100);
+        pathEl.setLayoutY(50);
+        
+        pathEl.getNode().setStroke(Color.BLUE);
+        pathEl.getNode().getStrokeDashArray().setAll(5d,5d);
+        pathEl.getNode().autosize();
+        pathEl.autosize();
+        
+        PathTransition pathTransition = PathTransitionBuilder.create()
+                .duration(Duration.seconds(4))
+                .path(pathEl.getNode())
+                .node(spriteGeorge)
+                .orientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT)
+                .cycleCount(Timeline.INDEFINITE)
+                .autoReverse(true)
+                .build();
+        
+        pathTransition.play();
+        
 
 //        getGameScene().addEventFilter(GameEvent.ANY, new EventHandler<GameEvent>() {
 //            @Override

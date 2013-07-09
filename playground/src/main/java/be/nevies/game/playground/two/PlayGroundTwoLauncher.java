@@ -17,7 +17,7 @@ public class PlayGroundTwoLauncher extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        GameController controller = new PlayGroundTwo(stage, 30, "Play ground two. Atom all around.", 600, 600);
+        GameController controller = new PlayGroundTwo(stage, 30, 30, "Play ground two. Atom all around.", 600, 600);
         controller.initialise();
         controller.startGameUpdateTimeline();
         // ScenicView.show(stage.getScene());
