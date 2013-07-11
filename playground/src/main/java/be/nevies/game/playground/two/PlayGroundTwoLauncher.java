@@ -5,6 +5,7 @@
 package be.nevies.game.playground.two;
 
 import be.nevies.game.engine.core.general.GameController;
+import be.nevies.game.engine.core.sound.SoundManager;
 import com.javafx.experiments.scenicview.ScenicView;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -15,9 +16,11 @@ import javafx.stage.Stage;
  */
 public class PlayGroundTwoLauncher extends Application {
 
+    private GameController controller;
+    
     @Override
     public void start(Stage stage) throws Exception {
-        GameController controller = new PlayGroundTwo(stage, 30, 30, "Play ground two. Atom all around.", 600, 600);
+        controller = new PlayGroundTwo(stage, 30, 30, "Play ground two. Atom all around.", 600, 600);
         controller.initialise();
         controller.startGameUpdateTimeline();
         // ScenicView.show(stage.getScene());
@@ -26,5 +29,15 @@ public class PlayGroundTwoLauncher extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+    
+    
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        System.out.println("Stop application");
+        controller.stopGameUpdateTimeline();
+        controller.stopSoundUpdateTimeline();
+        SoundManager.getInstance().stopCollisionCheck();
     }
 }

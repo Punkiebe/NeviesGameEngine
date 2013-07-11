@@ -76,42 +76,29 @@ public class PlayGroundOne extends GameController {
 
         ImageView imageView = new ImageView("be/nevies/game/playground/one/images/george_0.png");
         Sprite spriteGeorge = new Sprite(16, 4, 48, 48, imageView);
-        SpriteAnimation build = SpriteAnimationBuilder.create(spriteGeorge).columns(1).totalNbrFrames(4).duration(Duration.seconds(5)).build();
-        build.play();
+        //SpriteAnimation build = SpriteAnimationBuilder.create(spriteGeorge).columns(1).totalNbrFrames(4).duration(Duration.seconds(5)).build();
+        //build.play();
+        SpriteAnimation build2 = SpriteAnimationBuilder.create(spriteGeorge).columns(1).totalNbrFrames(4).offsetX(48).duration(Duration.seconds(1)).build();
+        build2.setCycleCount(Timeline.INDEFINITE);
+        build2.play();
         
-        
-        Path path = PathBuilder.create()
-                .elements(
-                    new MoveTo(50,50),
-                    new CubicCurveTo(380, 0, 380, 120, 200, 120),
-                    new CubicCurveTo(0, 120, 0, 240, 380, 240)
-                )
-                .build();
-        path.setStroke(Color.DODGERBLUE);
-        path.getStrokeDashArray().setAll(5d,5d);
+        spriteGeorge.addBehaviour(PlayGroundOneBehaviour.NOT_CROSSABLE);
+        spriteGeorge.addCollisionBounds(spriteGeorge.getBoundsInLocal());
+        spriteGeorge.showCollisionBounds();
         
         PathElement pathEl = new PathElement(new Path(new MoveTo(100, 200)), getGameMainNode());
-        
-        //pathEl.addPathElement(new LineTo(100, 200));
-        
-       // pathEl.addPathElement(new MoveTo(100, 200));
-        pathEl.setLayoutX(100);
-        pathEl.setLayoutY(50);
-        
+        pathEl.addPathElement(new LineTo(200, 200));
         pathEl.getNode().setStroke(Color.BLUE);
         pathEl.getNode().getStrokeDashArray().setAll(5d,5d);
-        pathEl.getNode().autosize();
-        pathEl.autosize();
         
         PathTransition pathTransition = PathTransitionBuilder.create()
-                .duration(Duration.seconds(4))
+                .duration(Duration.seconds(10))
                 .path(pathEl.getNode())
                 .node(spriteGeorge)
                 .orientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT)
                 .cycleCount(Timeline.INDEFINITE)
                 .autoReverse(true)
                 .build();
-        
         pathTransition.play();
         
 

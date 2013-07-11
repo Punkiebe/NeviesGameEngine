@@ -36,7 +36,6 @@ public class PlayerOne extends Element<Node> {
 
     public void moveUp() {
         CollisionManager.checkForCollisions();
-        System.out.println(">> last collision direction : " + lastCollisionDirection);
         if (lastCollisionDirection != Direction.BOTTOM || moveable) {
             moveY(-1);
         }
@@ -46,7 +45,6 @@ public class PlayerOne extends Element<Node> {
 
     public void moveDown() {
         CollisionManager.checkForCollisions();
-        System.out.println(">> last collision direction : " + lastCollisionDirection);
         if (lastCollisionDirection != Direction.TOP || moveable) {
             moveY(+1);
         }
@@ -56,7 +54,6 @@ public class PlayerOne extends Element<Node> {
 
     public void moveRight() {
         CollisionManager.checkForCollisions();
-        System.out.println(">> last collision direction : " + lastCollisionDirection);
         if (lastCollisionDirection != Direction.LEFT || moveable) {
             moveX(+1);
         }
@@ -67,7 +64,6 @@ public class PlayerOne extends Element<Node> {
 
     public void moveLeft() {
         CollisionManager.checkForCollisions();
-        System.out.println(">> last collision direction : " + lastCollisionDirection);
         if (lastCollisionDirection != Direction.RIGHT || moveable) {
             moveX(-1);
         }
