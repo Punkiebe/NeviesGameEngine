@@ -10,11 +10,14 @@ import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.BehaviourType;
 import be.nevies.game.engine.core.general.Element;
+import be.nevies.game.engine.core.util.CollisionUtil;
 import java.util.Collection;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -22,64 +25,56 @@ import javafx.scene.shape.Circle;
  */
 public class PlayerOne extends Element<Node> {
 
-    private boolean moveable = true;
-    private Direction lastCollisionDirection;
-
     public PlayerOne() {
         super(new Circle(15));
         Bounds bounds = new BoundingBox(-15, -15, 30, 30);
         addCollisionBounds(bounds);
-       // bounds = new BoundingBox(-7.5, -15, 15, 30);
-       // addCollisionBounds(bounds);
+        // bounds = new BoundingBox(-7.5, -15, 15, 30);
+        // addCollisionBounds(bounds);
         showCollisionBounds();
     }
 
     public void moveUp() {
-        CollisionManager.checkForCollisions();
-        if (lastCollisionDirection != Direction.BOTTOM || moveable) {
+        if (CollisionUtil.checkBeforeMove(this, Direction.TOP)) {
             moveY(-1);
         }
-        lastCollisionDirection = null;
-        moveable = true;
     }
 
     public void moveDown() {
-        CollisionManager.checkForCollisions();
-        if (lastCollisionDirection != Direction.TOP || moveable) {
+        if (CollisionUtil.checkBeforeMove(this, Direction.BOTTOM)) {
             moveY(+1);
         }
-        lastCollisionDirection = null;
-        moveable = true;
     }
 
     public void moveRight() {
-        CollisionManager.checkForCollisions();
-        if (lastCollisionDirection != Direction.LEFT || moveable) {
+        if (CollisionUtil.checkBeforeMove(this, Direction.RIGHT)) {
             moveX(+1);
         }
-        lastCollisionDirection = null;
-        moveable = true;
-        // getNode().setTranslateX(getNode().getTranslateX() + 1);
     }
 
     public void moveLeft() {
-        CollisionManager.checkForCollisions();
-        if (lastCollisionDirection != Direction.RIGHT || moveable) {
+        if (CollisionUtil.checkBeforeMove(this, Direction.LEFT)) {
             moveX(-1);
         }
-        lastCollisionDirection = null;
-        moveable = true;
-        // getNode().setTranslateX(getNode().getTranslateX() - 1);
+    }
+
+    public Bullet shootBullet(Group gameGroup) {
+        Rectangle bulletRec = new Rectangle(getLayoutX(), getLayoutY(), 5, 3);
+        Bullet bullet = new Bullet(bulletRec, gameGroup);
+        bullet.addCollisionBounds(bullet.getBoundsInLocal());
+        bullet.addBehaviour(PlayGroundOneBehaviour.BULLET_BEHAVIOUR);
+        bullet.showCollisionBounds();
+        return bullet;
     }
 
     @Override
     protected void handleCollision(GameEvent event) {
         super.handleCollision(event);
-        System.out.println("Player handles collision " + event.getSource() + " " + event.getTarget());
-        System.out.println("source : " + event.getGameEventObject().getSource());
-        System.out.println("target : " + event.getGameEventObject().getTarget());
-        System.out.println("behaviour : " + event.getGameEventObject().getTarget().getBehaviourTypes());
-        System.out.println("current object : " + this);
+//        System.out.println("Player handles collision " + event.getSource() + " " + event.getTarget());
+//        System.out.println("source : " + event.getGameEventObject().getSource());
+//        System.out.println("target : " + event.getGameEventObject().getTarget());
+//        System.out.println("behaviour : " + event.getGameEventObject().getTarget().getBehaviourTypes());
+//        System.out.println("current object : " + this);
 
         if (event.getGameEventObject().getTarget().hasBehaviourTypes()) {
             handleBehaviourTypes(event.getGameEventObject().getTarget().getBehaviourTypes(), event.getGameEventObject());
@@ -91,16 +86,14 @@ public class PlayerOne extends Element<Node> {
             switch (behaviourType) {
                 case PlayGroundOneBehaviour.NOT_CROSSABLE:
                     System.out.println("Stop moving");
-                    lastCollisionDirection = gameEventObject.getDirection();
-                    moveable = false;
                     break;
-                case PlayGroundOneBehaviour.OWN_BEHAVIOUR: 
+                case PlayGroundOneBehaviour.OWN_BEHAVIOUR:
                     System.out.println("Own behaviour");
-                    lastCollisionDirection = gameEventObject.getDirection();
                     break;
                 default:
                     continue;
             }
         }
     }
+    
 }

@@ -13,5 +13,6 @@ import be.nevies.game.engine.core.general.BehaviourType;
 public class PlayGroundOneBehaviour extends BehaviourType {
 
     public static final String OWN_BEHAVIOUR = "OWN_BEHAVIOUR";
+    public static final String BULLET_BEHAVIOUR = "BULLET_BEHAVIOUR";
 
 }

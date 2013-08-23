@@ -11,10 +11,13 @@ import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.graphic.Sprite;
+import be.nevies.game.engine.core.util.CollisionUtil;
+import be.nevies.game.engine.core.util.Direction;
 import javafx.animation.PathTransition;
 import javafx.animation.PathTransitionBuilder;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -75,32 +78,47 @@ public class PlayGroundOne extends GameController {
         CollisionManager.addPassiveElement(sprite1, sprite2, sprite3, sprite4);
 
         ImageView imageView = new ImageView("be/nevies/game/playground/one/images/george_0.png");
-        Sprite spriteGeorge = new Sprite(16, 4, 48, 48, imageView);
+        final Sprite spriteGeorge = new Sprite(16, 4, 48, 48, imageView);
         //SpriteAnimation build = SpriteAnimationBuilder.create(spriteGeorge).columns(1).totalNbrFrames(4).duration(Duration.seconds(5)).build();
         //build.play();
         SpriteAnimation build2 = SpriteAnimationBuilder.create(spriteGeorge).columns(1).totalNbrFrames(4).offsetX(48).duration(Duration.seconds(1)).build();
         build2.setCycleCount(Timeline.INDEFINITE);
         build2.play();
-        
+
+        player.setLayoutX(200);
+        player.setLayoutY(150);
+        player.addBehaviour(PlayGroundOneBehaviour.NOT_CROSSABLE);
+
         spriteGeorge.addBehaviour(PlayGroundOneBehaviour.NOT_CROSSABLE);
         spriteGeorge.addCollisionBounds(spriteGeorge.getBoundsInLocal());
         spriteGeorge.showCollisionBounds();
-        
-        PathElement pathEl = new PathElement(new Path(new MoveTo(100, 200)), getGameMainNode());
+
+        CollisionManager.addActiveElement(spriteGeorge);
+
+        PathElement pathEl = new PathElement(new Path(new MoveTo(400, 200)), getGameMainNode());
         pathEl.addPathElement(new LineTo(200, 200));
         pathEl.getNode().setStroke(Color.BLUE);
-        pathEl.getNode().getStrokeDashArray().setAll(5d,5d);
-        
-        PathTransition pathTransition = PathTransitionBuilder.create()
+        pathEl.getNode().getStrokeDashArray().setAll(5d, 5d);
+
+        final PathTransition pathTransition = PathTransitionBuilder.create()
                 .duration(Duration.seconds(10))
                 .path(pathEl.getNode())
                 .node(spriteGeorge)
-                .orientation(PathTransition.OrientationType.ORTHOGONAL_TO_TANGENT)
-                .cycleCount(Timeline.INDEFINITE)
+                .orientation(PathTransition.OrientationType.NONE)
+                .cycleCount(1)
                 .autoReverse(true)
                 .build();
         pathTransition.play();
-        
+
+
+        spriteGeorge.addEventHandler(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
+            @Override
+            public void handle(GameEvent t) {
+                System.out.println("Handle collision event sprite george : " + t.toString());
+                handleGeorge(pathTransition, Direction.LEFT, spriteGeorge);
+            }
+        });
+
 
 //        getGameScene().addEventFilter(GameEvent.ANY, new EventHandler<GameEvent>() {
 //            @Override
@@ -116,10 +134,24 @@ public class PlayGroundOne extends GameController {
             }
         });
 
+        getGameScene().addEventHandler(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
+            @Override
+            public void handle(GameEvent t) {
+                // System.out.println("Game update event check collision : " + t.toString());
+                CollisionManager.checkForCollisions();
+            }
+        });
+
         CollisionManager.addActiveElement(player);
 
         addElementToGameMainNode(spriteGeorge);
         addElementToGameMainNode(player);
+    }
+
+    private static void handleGeorge(final PathTransition path, final Direction direction, Sprite george) {
+        if (!CollisionUtil.checkBeforeMove(george, direction)) {
+            path.stop();
+        }
     }
 
     private void setupInput(Scene scene) {
@@ -138,6 +170,9 @@ public class PlayGroundOne extends GameController {
                         break;
                     case RIGHT:
                         player.moveRight();
+                        break;
+                    case SPACE:
+                        player.shootBullet(getGameMainNode());
                         break;
                 }
             }
