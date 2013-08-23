@@ -1,10 +1,10 @@
 package be.nevies.game.engine.core.collision;
 
-import be.nevies.game.engine.core.util.Direction;
-import be.nevies.game.engine.core.util.PositionUtil;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.Element;
+import be.nevies.game.engine.core.util.Direction;
+import be.nevies.game.engine.core.util.PositionUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -31,6 +31,7 @@ public final class CollisionManager {
     private List<Element> passiveElements;
     private Map<Element, Collection<Rectangle>> passiveMap;
     private static boolean checkingCollision = false;
+    private Map<Element, GameEventObject> resultMapLastCheck;
 
     /**
      * Default constructor.
@@ -108,6 +109,7 @@ public final class CollisionManager {
         }
         checkingCollision = true;
         try {
+            Map<Element, GameEventObject> resultMap = new HashMap<>();
             ArrayList<Element> activeIter = new ArrayList<>(getInstance().activeElements);
             for (Element checkActive : activeIter) {
                 // First against also other active elements
@@ -115,7 +117,11 @@ public final class CollisionManager {
                     if (checkActive != checkAgainst) {
                         ReturnObjectCheckBounds collision = checkTwoCollectionsOfBounds(checkActive.getCollisionBounds(), checkAgainst.getCollisionBounds());
                         if (collision.isCollision()) {
-                            checkActive.fireEvent(new GameEvent(new GameEventObject(checkActive, checkAgainst, collision.getDirection()), checkActive, GameEvent.COLLISION_EVENT));
+                            GameEventObject gameEventObject = new GameEventObject(checkActive, checkAgainst, collision.getDirection());
+                            checkActive.fireEvent(new GameEvent(gameEventObject, checkActive, GameEvent.COLLISION_EVENT));
+                            checkActive.fireEvent(new GameEvent(gameEventObject, checkAgainst, GameEvent.COLLISION_EVENT));
+                            resultMap.put(checkActive, gameEventObject);
+                            resultMap.put(checkAgainst, gameEventObject);
                         }
                     }
                 }
@@ -124,11 +130,16 @@ public final class CollisionManager {
                     if (checkActive != checkAgainst) {
                         ReturnObjectCheckBounds collision = checkTwoCollectionsOfBounds(checkActive.getCollisionBounds(), getInstance().passiveMap.get(checkAgainst));
                         if (collision.isCollision()) {
-                            checkActive.fireEvent(new GameEvent(new GameEventObject(checkActive, checkAgainst, collision.getDirection()), checkActive, GameEvent.COLLISION_EVENT));
+                            GameEventObject gameEventObject = new GameEventObject(checkActive, checkAgainst, collision.getDirection());
+                            checkActive.fireEvent(new GameEvent(gameEventObject, checkActive, GameEvent.COLLISION_EVENT));
+                            checkActive.fireEvent(new GameEvent(gameEventObject, checkAgainst, GameEvent.COLLISION_EVENT));
+                            resultMap.put(checkActive, gameEventObject);
+                            resultMap.put(checkAgainst, gameEventObject);
                         }
                     }
                 }
             }
+            getInstance().setResultMapLastCheck(resultMap);
         } catch (RuntimeException rte) {
             LOG.error("There where problems while checken for collisions.", rte);
         } finally {
@@ -175,5 +186,29 @@ public final class CollisionManager {
      */
     public int totalNumberOfElements() {
         return totalNumberOfActiveElements() + totalNumberOfPassiveElements();
+    }
+
+    /**
+     * @return The result map of last check.
+     */
+    private Map<Element, GameEventObject> getResultMapLastCheck() {
+        return resultMapLastCheck;
+    }
+
+    /**
+     * @param resultMapLastCheck The result map of last check.
+     */
+    private void setResultMapLastCheck(Map<Element, GameEventObject> resultMapLastCheck) {
+        this.resultMapLastCheck = resultMapLastCheck;
+    }
+
+    /**
+     * Retrieve the game event object of last collision check for an element.
+     *
+     * @param element The element.
+     * @return The game event object of the last collision, if there was a collision. Or null if there was in last check no collision for this element.
+     */
+    public static GameEventObject getGameEventForLastCollision(Element element) {
+        return getInstance().getResultMapLastCheck().get(element);
     }
 }
