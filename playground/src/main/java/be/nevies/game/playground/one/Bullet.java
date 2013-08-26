@@ -38,11 +38,11 @@ public class Bullet extends Element<Rectangle> {
     protected void handleCollision(GameEvent event) {
         super.handleCollision(event);
         
-        System.out.println("Bullet handles collision " + event.getSource() + " " + event.getTarget());
-        System.out.println("source : " + event.getGameEventObject().getSource());
-        System.out.println("target : " + event.getGameEventObject().getTarget());
-        System.out.println("behaviour : " + event.getGameEventObject().getTarget().getBehaviourTypes());
-        System.out.println("current object : " + this);
+//        System.out.println("Bullet handles collision " + event.getSource() + " " + event.getTarget());
+//        System.out.println("source : " + event.getGameEventObject().getSource());
+//        System.out.println("target : " + event.getGameEventObject().getTarget());
+//        System.out.println("behaviour : " + event.getGameEventObject().getTarget().getBehaviourTypes());
+//        System.out.println("current object : " + this);
     }
     
     

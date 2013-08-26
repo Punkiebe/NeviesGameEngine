@@ -38,6 +38,5 @@ public class PlayGroundTwoLauncher extends Application {
         System.out.println("Stop application");
         controller.stopGameUpdateTimeline();
         controller.stopSoundUpdateTimeline();
-        SoundManager.getInstance().stopCollisionCheck();
     }
 }

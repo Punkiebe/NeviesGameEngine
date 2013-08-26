@@ -9,6 +9,7 @@ import be.nevies.game.engine.core.animation.SpriteAnimation;
 import be.nevies.game.engine.core.animation.SpriteAnimationBuilder;
 import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.event.GameEvent;
+import be.nevies.game.engine.core.general.Element;
 import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.graphic.Sprite;
 import be.nevies.game.engine.core.util.CollisionUtil;
@@ -17,7 +18,6 @@ import javafx.animation.PathTransition;
 import javafx.animation.PathTransitionBuilder;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -85,8 +85,8 @@ public class PlayGroundOne extends GameController {
         build2.setCycleCount(Timeline.INDEFINITE);
         build2.play();
 
-        player.setLayoutX(200);
-        player.setLayoutY(150);
+        player.setLayoutX(90);
+        player.setLayoutY(40);
         player.addBehaviour(PlayGroundOneBehaviour.NOT_CROSSABLE);
 
         spriteGeorge.addBehaviour(PlayGroundOneBehaviour.NOT_CROSSABLE);
@@ -119,6 +119,22 @@ public class PlayGroundOne extends GameController {
             }
         });
 
+        sprite2.addEventHandler(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
+
+            @Override
+            public void handle(GameEvent t) {
+                System.out.println(">>Handle bullet");
+                Element source = t.getGameEventObject().getSource();
+                Element target = t.getGameEventObject().getTarget();
+                if (source.checkForBehaviour(PlayGroundOneBehaviour.BULLET_BEHAVIOUR)) {
+//                    boolean removeElementFromGroup = target.removeElementFromGroup();
+//                    System.out.println(">> removed : " + removeElementFromGroup);
+                    target.removeElement();
+                    CollisionManager.removeElement(target);
+                }
+            }
+            
+        });
 
 //        getGameScene().addEventFilter(GameEvent.ANY, new EventHandler<GameEvent>() {
 //            @Override
@@ -127,12 +143,12 @@ public class PlayGroundOne extends GameController {
 //            }
 //        });
 
-        getGameScene().addEventFilter(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
-            @Override
-            public void handle(GameEvent t) {
-                System.out.println("Filter collision event : " + t.toString());
-            }
-        });
+//        getGameScene().addEventFilter(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
+//            @Override
+//            public void handle(GameEvent t) {
+//                System.out.println("Filter collision event : " + t.toString());
+//            }
+//        });
 
         getGameScene().addEventHandler(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
             @Override
