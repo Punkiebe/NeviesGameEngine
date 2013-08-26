@@ -1,6 +1,7 @@
 package be.nevies.game.engine.core.general;
 
 import be.nevies.game.engine.core.event.GameEvent;
+import java.util.logging.Level;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -254,6 +255,10 @@ public abstract class GameController {
      * @param el The element you want to add.
      */
     public void addElementToGameMainNode(Element el) {
-        getGameMainNode().getChildren().add(el);
+        try {
+            el.addElementToGroup(getGameMainNode());
+        } catch (IllegalAccessException ex) {
+            LOG.error("The following error was thrown when adding an element to the main game node. {}", ex.getMessage());
+        }
     }
 }

@@ -56,7 +56,7 @@ public abstract class Element<T extends Node> extends Parent {
         this.addEventHandler(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
             @Override
             public void handle(GameEvent t) {
-                LOG.debug("Handle collision event for, source : {}, target : {}", t.getSource(), t.getTarget());
+                LOG.debug("Handle collision event for, source : {}, target : {}", t.getGameEventObject().getSource(), t.getGameEventObject().getTarget());
                 handleCollision(t);
             }
         });
@@ -241,6 +241,23 @@ public abstract class Element<T extends Node> extends Parent {
      */
     public boolean hasBehaviourTypes() {
         return !behaviourTypes.isEmpty();
+    }
+
+    /**
+     * Check if a behaviour type is present in the element.
+     *
+     * @param behaviour The behaviour type you want to check.
+     * @return True if the behaviour is present for this element.
+     */
+    public boolean checkForBehaviour(String behaviour) {
+        if (hasBehaviourTypes()) {
+            for (String type : getBehaviourTypes()) {
+                if (type.equals(behaviour)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

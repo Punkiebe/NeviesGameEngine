@@ -101,6 +101,7 @@ public final class CollisionManager {
      * elements against all elements in the passive collection. If a collision was found then there's a GameEvent fired of the type 'COLLISION_EVENT' from the
      * element that was the source from the check. If it was a check from active elements against passive elements then the source is always the active element.
      * The method keeps checking till all elements are visit.
+     * @TODO Rework the comments!!
      */
     public static void checkForCollisions() {
         if (checkingCollision) {
@@ -119,20 +120,21 @@ public final class CollisionManager {
                         if (collision.isCollision()) {
                             GameEventObject gameEventObject = new GameEventObject(checkActive, checkAgainst, collision.getDirection());
                             checkActive.fireEvent(new GameEvent(gameEventObject, checkActive, GameEvent.COLLISION_EVENT));
-                            checkActive.fireEvent(new GameEvent(gameEventObject, checkAgainst, GameEvent.COLLISION_EVENT));
+                            checkAgainst.fireEvent(new GameEvent(gameEventObject, checkAgainst, GameEvent.COLLISION_EVENT));
                             resultMap.put(checkActive, gameEventObject);
                             resultMap.put(checkAgainst, gameEventObject);
                         }
                     }
                 }
                 // Then against passive elements
-                for (Element checkAgainst : getInstance().passiveElements) {
+                ArrayList<Element> passiveIter = new ArrayList<>(getInstance().passiveElements);
+                for (Element checkAgainst : passiveIter) {
                     if (checkActive != checkAgainst) {
                         ReturnObjectCheckBounds collision = checkTwoCollectionsOfBounds(checkActive.getCollisionBounds(), getInstance().passiveMap.get(checkAgainst));
                         if (collision.isCollision()) {
                             GameEventObject gameEventObject = new GameEventObject(checkActive, checkAgainst, collision.getDirection());
                             checkActive.fireEvent(new GameEvent(gameEventObject, checkActive, GameEvent.COLLISION_EVENT));
-                            checkActive.fireEvent(new GameEvent(gameEventObject, checkAgainst, GameEvent.COLLISION_EVENT));
+                            checkAgainst.fireEvent(new GameEvent(gameEventObject, checkAgainst, GameEvent.COLLISION_EVENT));
                             resultMap.put(checkActive, gameEventObject);
                             resultMap.put(checkAgainst, gameEventObject);
                         }
