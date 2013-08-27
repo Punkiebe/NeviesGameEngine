@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="16" tileheight="16">
+ <tileset firstgid="1" name="free_tileset_version_9" tilewidth="16" tileheight="16">
+  <image source="../Documents/free_tileset_version_9.png" width="480" height="1088"/>
+ </tileset>
+ <layer name="Ground" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJzt0jEOgCAUBNF/EbwI3v9c0moiFXEWMwWZ7hf7aFV1jNc2bx/v/EHpHfXQI7n0jnrokVx6Rz30eGtfdOcrj9mNnTxmN/TQY7XHs+keyaX/tR56JJfeUQ89kkvvqIceyaV31EOP5NI76qFHcukd9dAjufSOeuiRXHpHPe69AIJ/s8k=
+  </data>
+ </layer>
+ <objectgroup name="BasisLaag" width="50" height="50" visible="0"/>
+ <layer name="WallsAndFurnerture" width="50" height="50">
+  <data encoding="base64" compression="zlib">
+   eJztmQlKw0AUhie4gOsdXMD1Ai5Q0WqXOwhVaK1eQ4pexLO4gOsdXMD1CH6DEyihCW0nnTzD/PAxgUle5iMZeCEFpdQWlKAMOxYUYTcD9qACTTiAQzP2i76+Dg1z7AJ9vxPjocd7eIBHeFLxuYQruIabDvPHpp6rhPcLx0/4gm/4SbjuGV7gFd4S6rpK1GMiUGoSpmA6iL9uiLlhGIHRDudl7bHEmpZhBVYTPGaYm4U5mBfoUWJNZahANcGj27quEvWos/YGHEGzD49buFPZe9jmHT5SrNdt0vYY4xmOB//fYwGHxRx4ROu6Sni/MzgfQF1XyZtHXt4rPVbVX9/eS4++DZuw0TYWoGXqFSPEnW/znaA5bfPQfXuvPXsN1gzrhn0V31/HnW/znaAJ+3bX70HaGdT+cB3vISveQ1a8h6zkzSPtPtF18vY8vIeM+P0hK95DVvz+kBXvISt+f8iK95AV7yEr3kNWvIesRP/j2P5PyYqW8bhQ9v9SsqYGv9n1yzI=
+  </data>
+ </layer>
+</map>
