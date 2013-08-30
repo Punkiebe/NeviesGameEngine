@@ -4,16 +4,16 @@
  */
 package be.nevies.game.playground.one;
 
-import be.nevies.game.engine.core.graphic.TileSet;
+import be.nevies.game.engine.core.graphic.TileCollection;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 
 /**
- * TileSet mapper class for the image : "be/nevies/game/playground/one/images/free_tileset_version_9.png".
+ * TileCollection mapper class for the image : "be/nevies/game/playground/one/images/free_tileset_version_9.png".
  * 
  * @author drs
  */
-public class FreeTileSetVersion9Mapper extends TileSet {
+public class FreeTileSetVersion9Mapper extends TileCollection {
 
     public static final String TILE_GROUND_TYPE_1 = "TILE_GROUND_TYPE_1";
     public static final String TILE_GROUND_TYPE_2 = "TILE_GROUND_TYPE_2";
