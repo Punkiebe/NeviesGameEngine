@@ -24,7 +24,7 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
-            <plugin>
+<!--            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <version>1.5</version>
@@ -42,6 +42,27 @@
                     <schemaDirectory>${project.basedir}/src/main/resources/be/nevies/game/engine/tiled/plugin/map</schemaDirectory>
                     <schemaFiles>map.dtd</schemaFiles>
                     <packageName>be.nevies.game.engine.tiled.plugin.map</packageName>
+                </configuration>
+            </plugin>-->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>jaxb2-maven-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <goals>
+                            <goal>xjc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <arguments>-extension</arguments>
+                    <schemaDirectory>${project.basedir}/src/main/resources/be/nevies/game/engine/tiled/plugin/map</schemaDirectory>
+                    <schemaFiles>mapv2.xsd</schemaFiles>
+                    <packageName>be.nevies.game.engine.tiled.plugin.map</packageName>
+                    <bindingDirectory>${project.basedir}/src/main/resources/be/nevies/game/engine/tiled/plugin/map/jaxb</bindingDirectory>
+                    <bindingFiles>jaxb-bindings.xml</bindingFiles>
                 </configuration>
             </plugin>
         </plugins>

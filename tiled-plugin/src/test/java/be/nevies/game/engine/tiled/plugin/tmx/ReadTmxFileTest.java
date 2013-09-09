@@ -4,14 +4,12 @@
  */
 package be.nevies.game.engine.tiled.plugin.tmx;
 
-import be.nevies.game.engine.tiled.plugin.map.Layer;
+import be.nevies.game.engine.tiled.plugin.map.LayerType;
 import be.nevies.game.engine.tiled.plugin.map.Map;
-import be.nevies.game.engine.tiled.plugin.map.Objectgroup;
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.Base64Data;
+import be.nevies.game.engine.tiled.plugin.map.ObjectgroupType;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.Serializable;
 import java.io.StringWriter;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -29,22 +27,23 @@ public class ReadTmxFileTest {
         ReadTmxFile read = new ReadTmxFile();
         Map mapFromTmxFile = read.getMapFromTmxFile();
         assertNotNull(mapFromTmxFile);
-        assertEquals(3, mapFromTmxFile.getLayerOrObjectgroup().size());
-        for (Object obj : mapFromTmxFile.getLayerOrObjectgroup()) {
-            if (obj instanceof Layer) {
-                Layer layer = (Layer) obj;
+        assertEquals(3, mapFromTmxFile.getLayerOrObjectgroupOrImagelayer().size());
+        for (Serializable obj : mapFromTmxFile.getLayerOrObjectgroupOrImagelayer()) {
+            if (obj instanceof LayerType) {
+                LayerType layer = (LayerType) obj;
                 if (layer.getData() != null) {
-                    layer.getData().getvalue();
-                    System.out.println(">> data : " + layer.getData().getvalue());
+                    layer.getData().getContent();
+                    System.out.println(">> content list : " + layer.getData().getContent().size());
+                    System.out.println(">> content : " + layer.getData().getContent());
                     
-                    BASE64Decoder base64 = new BASE64Decoder();
-                    byte[] decodeBuffer = base64.decodeBuffer(layer.getData().getvalue());
-                    ByteArrayInputStream inputStream = new ByteArrayInputStream(decodeBuffer);
-                    StringWriter writer = new StringWriter();
+//                    BASE64Decoder base64 = new BASE64Decoder();
+//                    byte[] decodeBuffer = base64.decodeBuffer(layer.getData().getvalue());
+//                    ByteArrayInputStream inputStream = new ByteArrayInputStream(decodeBuffer);
+//                    StringWriter writer = new StringWriter();
                     
                 }
                 
-            } else if (obj instanceof Objectgroup) {
+            } else if (obj instanceof ObjectgroupType) {
                 System.out.println(">> object of type " + obj.getClass());
             } else {
                 System.out.println("ERROR!! Should not happen!");

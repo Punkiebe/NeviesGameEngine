@@ -5,13 +5,13 @@
 package be.nevies.game.engine.tiled.plugin.tmx;
 
 import be.nevies.game.engine.tiled.plugin.map.Map;
-import com.sun.xml.internal.bind.v2.runtime.JAXBContextImpl;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.validation.Schema;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -25,9 +25,9 @@ public class ReadTmxFile {
     
     public Map getMapFromTmxFile() {
         try {
-            JAXBContext context = JAXBContextImpl.newInstance("be.nevies.game.engine.tiled.plugin.map");
+            JAXBContext context = JAXBContext.newInstance("be.nevies.game.engine.tiled.plugin.map");
             Unmarshaller unmarshaller = context.createUnmarshaller();
-            Map tmxMap = (Map) unmarshaller.unmarshal(ReadTmxFile.class.getResourceAsStream("/be/nevies/game/engine/tiled/plugin/example/firstHouse.tmx"));
+            Map tmxMap = (Map) unmarshaller.unmarshal(ReadTmxFile.class.getResourceAsStream("/be/nevies/game/engine/tiled/plugin/example/firstHouseXML.tmx"));
             return tmxMap;
         } catch (JAXBException ex) {
             LOG.error("There where problem when triing to get the map from the tmx file. {}", ex.getMessage());

@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+  TMX version 1.1
+    Tiled Developers (mapeditor.org)
+  Schema created by dries.schelfhout@gmail.com
+  Using schema of Olivier.Beaton@quadir.net as guide
+    Creative Commons Attribution 3.0
+    http://creativecommons.org/licenses/by/3.0/
+  last updated on
+    2013-09-02
+-->
+
+<xs:schema version="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mapeditor.org" xmlns="http://mapeditor.org" elementFormDefault="qualified">
+   
+    <!-- SimpleTypes -->
+    
+    <xs:simpleType name="orientationType">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="orthogonal" />
+            <xs:enumeration value="isometric" />
+            <xs:enumeration value="hexagonal" />
+            <xs:enumeration value="shifted" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="hexColourType">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-fA-F0-9]{6}"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="opacityType">
+        <xs:restriction base="xs:decimal">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="visibleType">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="1"/>
+        </xs:restriction>
+    </xs:simpleType>
+        
+    <xs:simpleType name="encodingType">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="base64" />
+            <xs:enumeration  value="csv" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:simpleType name="compressionType">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="gzip" />
+            <xs:enumeration value="zlib" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!-- ComplexTypes -->
+    
+    <xs:complexType name="propertiesType">
+       <xs:sequence maxOccurs="unbounded">
+           <xs:element name="property" type="propertyType" />
+       </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="propertyType">
+        <xs:attribute name="key" type="xs:string" use="required" />
+        <xs:attribute name="value" type="xs:string" use="required" />
+    </xs:complexType>
+    
+    <xs:complexType name="tilesetType">
+        <xs:sequence>
+            <xs:element name="properties" type="propertiesType" minOccurs="0" />
+            <xs:element name="tileoffset" type="tileoffsetType" minOccurs="0" />
+            <xs:element name="terraintypes" type="terraintypesType" minOccurs="0" />
+            <xs:element name="image" type="imageType" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="tile" type="tileType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="firstgid" type="xs:nonNegativeInteger" use="required" />
+        <xs:attribute name="source" type="xs:anyURI" />
+        <xs:attribute name="name" type="xs:string" />
+        <xs:attribute name="tilewidth" type="xs:nonNegativeInteger" />
+        <xs:attribute name="tileheight" type="xs:nonNegativeInteger" />
+        <xs:attribute name="spacing" type="xs:nonNegativeInteger" />
+        <xs:attribute name="margin" type="xs:nonNegativeInteger" />
+    </xs:complexType>
+    
+    <xs:complexType name="tileoffsetType">
+        <xs:attribute name="x" type="xs:integer" default="0" />
+        <xs:attribute name="y" type="xs:integer" default="0" />
+    </xs:complexType>
+    
+    <xs:complexType name="terraintypesType">
+        <xs:sequence>
+            <xs:element name="terrain" type="terrainType" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="terrainType">
+        <xs:sequence>
+            <xs:element name="properties" type="propertiesType" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" />
+        <xs:attribute name="tile" type="xs:nonNegativeInteger" />
+    </xs:complexType>
+    
+    <xs:complexType name="imageType">
+        <xs:sequence>
+            <xs:element name="data" type="dataType" minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="format" type="xs:string" />
+        <xs:attribute name="id" type="xs:integer" />
+        <xs:attribute name="source" type="xs:string" />
+        <xs:attribute name="trans" type="hexColourType" />
+        <xs:attribute name="width" type="xs:integer" />
+        <xs:attribute name="height" type="xs:integer" />
+    </xs:complexType>
+    
+    <xs:complexType name="tileType">
+        <xs:sequence>
+            <xs:element name="properties" type="propertiesType"  minOccurs="0" />
+            <xs:element name="image" type="imageType"  minOccurs="0" />
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:integer" />
+        <xs:attribute name="terrain" type="xs:string" />
+        <xs:attribute name="probability" type="xs:integer" />
+    </xs:complexType>
+    
+    <xs:complexType name="layerType">
+        <xs:sequence>
+            <xs:element name="properties" type="propertiesType" minOccurs="0" />
+            <xs:element name="data" type="dataType" minOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="height" type="xs:nonNegativeInteger" />
+        <xs:attribute name="width" type="xs:nonNegativeInteger" />
+        <xs:attribute name="X" type="xs:nonNegativeInteger" />
+        <xs:attribute name="y" type="xs:nonNegativeInteger" />
+        <xs:attribute name="opacity" type="opacityType" default="1" />
+        <xs:attribute name="visible" type="visibleType" default="1" />
+    </xs:complexType>
+    
+    <xs:complexType name="dataType" mixed="true">
+        <xs:choice>
+            <xs:element name="tile" type="tileLayerType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:choice>
+        <xs:attribute name="encoding" type="encodingType" />
+        <xs:attribute name="compression" type="compressionType" />
+    </xs:complexType>
+    
+        <!--
+    <xs:complexType name="dataType">
+        <xs:choice>
+            <xs:element name="data" type="dataBinaryType" />
+            <xs:element name="data" type="dataTileType" />
+        </xs:choice>
+    </xs:complexType>
+    
+    <xs:complexType name="dataBinaryType" type="xs:base64Binary">
+        <xs:attribute name="encoding" type="encodingType" />
+        <xs:attribute name="compression" type="compressionType" />
+    </xs:complexType>
+    
+    <xs:complexType name="dataTileType">
+        <xs:sequence>
+            <xs:element name="tile" type="tileLayerType" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+    -->
+    
+    <xs:complexType name="tileLayerType">
+        <xs:attribute name="gid" type="xs:nonNegativeInteger" use="required" />
+    </xs:complexType>
+    
+    <xs:complexType name="objectgroupType">
+        <xs:sequence>
+            <xs:element name="properties" type="propertiesType" minOccurs="0" />
+            <xs:element name="object" type="objectType" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="color" type="hexColourType" />
+        <xs:attribute name="X" type="xs:nonNegativeInteger" />
+        <xs:attribute name="y" type="xs:nonNegativeInteger" />
+        <xs:attribute name="width" type="xs:nonNegativeInteger" />
+        <xs:attribute name="height" type="xs:nonNegativeInteger" />
+        <xs:attribute name="opacity" type="opacityType" default="1" />
+        <xs:attribute name="visible" type="visibleType" default="1" />
+    </xs:complexType>
+    
+    <xs:complexType name="objectType">
+        <xs:sequence>
+            <xs:element name="properties" type="propertiesType" minOccurs="0" />
+            <xs:choice>
+                <xs:element name="ellipse" type="ellipseType" minOccurs="0" />
+                <xs:element name="polygon" type="polygonType" minOccurs="0" />
+                <xs:element name="polyline" type="polylineType" minOccurs="0" />
+                <xs:element name="image" type="imageType" minOccurs="0" />
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" />
+        <xs:attribute name="type" type="xs:string" />
+        <xs:attribute name="X" type="xs:nonNegativeInteger" use="required" />
+        <xs:attribute name="y" type="xs:nonNegativeInteger" use="required" />
+        <xs:attribute name="width" type="xs:nonNegativeInteger" />
+        <xs:attribute name="height" type="xs:nonNegativeInteger" />
+        <xs:attribute name="rotation" type="xs:nonNegativeInteger" />
+        <xs:attribute name="gid" type="xs:nonNegativeInteger" />
+        <xs:attribute name="visible" type="visibleType" default="1" />
+    </xs:complexType>
+    
+    <xs:complexType name="ellipseType">
+        <!-- check how to do an empty element -->
+    </xs:complexType>
+    
+    <xs:complexType name="polygonType">
+        <xs:attribute name="points" type="xs:string" />
+    </xs:complexType>
+    
+    <xs:complexType name="polylineType">
+        <xs:attribute name="points" type="xs:string" />
+    </xs:complexType>
+    
+    <xs:complexType name="imagelayerType">
+        <xs:sequence>
+            <xs:element name="properties" type="propertiesType" minOccurs="0" />
+            <xs:element name="image" type="imageType" minOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="height" type="xs:nonNegativeInteger" />
+        <xs:attribute name="width" type="xs:nonNegativeInteger" />
+        <xs:attribute name="opacity" type="opacityType" default="1" />
+        <xs:attribute name="visible" type="visibleType" default="1" />
+    </xs:complexType>
+    
+    <!-- Elements -->
+    
+    <xs:element name="map">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="properties" type="propertiesType"  minOccurs="0" />
+                <xs:element name="tileset" type="tilesetType" maxOccurs="unbounded" />
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="layer" type="layerType" />
+                    <xs:element name="objectgroup" type="objectgroupType" />
+                    <xs:element name="imagelayer" type="imagelayerType" />
+                </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="version" type="xs:string" use="required" />
+            <xs:attribute name="orientation" type="orientationType" use="required" />
+            <xs:attribute name="width" type="xs:nonNegativeInteger" use="required" />
+            <xs:attribute name="height" type="xs:nonNegativeInteger" use="required" />
+            <xs:attribute name="tilewidth" type="xs:nonNegativeInteger" use="required" />
+            <xs:attribute name="tileheight" type="xs:nonNegativeInteger" use="required" />
+            <xs:attribute name="backgroundcolor" type="hexColourType" use="optional" />
+        </xs:complexType>
+    </xs:element>
+    
+    
+</xs:schema>
