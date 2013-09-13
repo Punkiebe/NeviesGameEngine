@@ -4,13 +4,11 @@
  */
 package be.nevies.game.engine.tiled.plugin.core;
 
-import be.nevies.game.engine.core.graphic.TileCollection;
 import be.nevies.game.engine.tiled.plugin.map.Map;
 import be.nevies.game.engine.tiled.plugin.tmx.ReadTmxFile;
-import java.util.Collection;
 import javafx.scene.Group;
-import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  *

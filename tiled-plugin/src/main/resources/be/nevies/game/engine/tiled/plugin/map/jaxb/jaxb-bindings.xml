@@ -8,6 +8,13 @@
             <xjc:javaType name="java.lang.Double" xmlType="xs:decimal" adapter="be.nevies.game.engine.tiled.plugin.jaxb.DecimalAdapter" />
             <xjc:javaType name="java.lang.Long" xmlType="xs:integer" adapter="be.nevies.game.engine.tiled.plugin.jaxb.IntegerAdapter"  />
         </jaxb:globalBindings>
+        
+        <jaxb:schemaBindings>
+            <jaxb:package name="be.nevies.game.engine.tiled.plugin.map" />
+<!--            <jaxb:nameXmlTransform>
+                <jaxb:typeName prefix="http://mapeditor.org" />
+            </jaxb:nameXmlTransform>-->
+        </jaxb:schemaBindings>        
     </jaxb:bindings>
 
 </jaxb:bindings>

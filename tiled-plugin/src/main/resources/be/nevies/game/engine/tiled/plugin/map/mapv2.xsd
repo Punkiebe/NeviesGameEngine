@@ -11,7 +11,7 @@
     2013-09-02
 -->
 
-<xs:schema version="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://mapeditor.org" xmlns="http://mapeditor.org" elementFormDefault="qualified">
+<xs:schema version="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
    
     <!-- SimpleTypes -->
     
@@ -143,16 +143,16 @@
         <xs:attribute name="visible" type="visibleType" default="1" />
     </xs:complexType>
     
+    <!--  base="xs:base64Binary" -->
     <xs:complexType name="dataType" mixed="true">
-        <xs:choice>
+        <xs:sequence>
             <xs:element name="tile" type="tileLayerType" minOccurs="0" maxOccurs="unbounded" />
-        </xs:choice>
+        </xs:sequence>
         <xs:attribute name="encoding" type="encodingType" />
         <xs:attribute name="compression" type="compressionType" />
     </xs:complexType>
     
-        <!--
-    <xs:complexType name="dataType">
+<!--    <xs:complexType name="dataType">
         <xs:choice>
             <xs:element name="data" type="dataBinaryType" />
             <xs:element name="data" type="dataTileType" />
@@ -168,8 +168,7 @@
         <xs:sequence>
             <xs:element name="tile" type="tileLayerType" maxOccurs="unbounded" />
         </xs:sequence>
-    </xs:complexType>
-    -->
+    </xs:complexType>-->
     
     <xs:complexType name="tileLayerType">
         <xs:attribute name="gid" type="xs:nonNegativeInteger" use="required" />

@@ -7,13 +7,13 @@ package be.nevies.game.engine.tiled.plugin.tmx;
 import be.nevies.game.engine.tiled.plugin.map.LayerType;
 import be.nevies.game.engine.tiled.plugin.map.Map;
 import be.nevies.game.engine.tiled.plugin.map.ObjectgroupType;
-import java.io.ByteArrayInputStream;
+import be.nevies.game.engine.tiled.plugin.map.TileLayerType;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
+import java.util.List;
+import javax.xml.bind.JAXBElement;
 import static org.junit.Assert.*;
 import org.junit.Test;
-import sun.misc.BASE64Decoder;
 
 /**
  * Test class for ReadTmxFile class.
@@ -35,11 +35,23 @@ public class ReadTmxFileTest {
                     layer.getData().getContent();
                     System.out.println(">> content list : " + layer.getData().getContent().size());
                     System.out.println(">> content : " + layer.getData().getContent());
+                    List<Serializable> content = layer.getData().getContent();
                     
-//                    BASE64Decoder base64 = new BASE64Decoder();
-//                    byte[] decodeBuffer = base64.decodeBuffer(layer.getData().getvalue());
-//                    ByteArrayInputStream inputStream = new ByteArrayInputStream(decodeBuffer);
-//                    StringWriter writer = new StringWriter();
+                    for (Serializable con : content) {
+                        if (con instanceof JAXBElement) {
+                            JAXBElement jaxbEl = (JAXBElement) con;
+                            
+                            if (jaxbEl.getValue() instanceof TileLayerType) {
+                                TileLayerType tileLayer = (TileLayerType) jaxbEl.getValue();
+                            }
+                            
+                        }
+                    }
+                    
+                    //                    BASE64Decoder base64 = new BASE64Decoder();
+                    //                    byte[] decodeBuffer = base64.decodeBuffer(layer.getData().getvalue());
+                    //                    ByteArrayInputStream inputStream = new ByteArrayInputStream(decodeBuffer);
+                    //                    StringWriter writer = new StringWriter();
                     
                 }
                 
