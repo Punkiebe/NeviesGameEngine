@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 public class PlayGroundThree extends GameController {
 
     /* Logger. */
-    private static final Logger LOG = LoggerFactory.getLogger(SoundManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PlayGroundThree.class);
     public static final String PIANO_MUSIC = "piano_music";
     public static final String PIANO_MUSIC_TWO = "piano_music_two";
     public static final String PIANO_MUSIC_THREE = "piano_music_three";
