@@ -7,9 +7,20 @@ package be.nevies.game.engine.tiled.plugin.core;
 import be.nevies.game.engine.core.graphic.TileCollection;
 import be.nevies.game.engine.tiled.plugin.map.Map;
 import be.nevies.game.engine.tiled.plugin.map.TilesetType;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 
@@ -23,28 +34,29 @@ public class TileCollectionCreator {
 
     /**
      * Reads the list of Tileset's of the map, and creates a collection of TileCollection's to use for building your layers.
-     * 
+     *
      * @param map The map object you want to create TileCollections from.
+     * @param tmxFile You need to give the tmx file also, so we can trace the path of the images defined.
      * @return A collection of all TileCollections that are used in this map.
      */
-    public static Collection<TileCollection> createTileCollectionsFromMap(Map map) {
+    public static Collection<TileCollection> createTileCollectionsFromMap(Map map, File tmxFile) {
         Collection<TileCollection> tileCols = new ArrayList<>();
         List<TilesetType> tilesets = map.getTileset();
         for (TilesetType tileset : tilesets) {
-            Image sourceImage = retrieveSourceImage(tileset);
+            Image sourceImage = retrieveSourceImage(tileset, tmxFile);
             TileCollection tileCol = new TileCollection(tileset.getName(), sourceImage);
             fillUpTileCollectionWithTiles(tileset, tileCol, (int) sourceImage.getHeight(), (int) sourceImage.getWidth());
-            System.out.println(">> tile col : " + tileCol.toString());
             tileCols.add(tileCol);
         }
         return tileCols;
     }
 
     /**
-     * @param The Tileset object from the map.
+     * @param tileset The Tileset object from the map.
+     * @param tmxFile The tmx file.
      * @return The Image object that goes with the tileset.
      */
-    private static Image retrieveSourceImage(TilesetType tileset) {
+    private static Image retrieveSourceImage(TilesetType tileset, File tmxFile) {
         String source = null;
         if (tileset.getSource() == null || "".equals(tileset.getSource())) {
             List<be.nevies.game.engine.tiled.plugin.map.ImageType> image = tileset.getImage();
@@ -56,12 +68,27 @@ public class TileCollectionCreator {
         } else {
             source = tileset.getSource();
         }
+
         if (source == null || "".equals(source)) {
             throw new IllegalArgumentException("You need a source for your image before you can create a tile collection.");
         }
 
-        return new Image(source);
+        File parentFile = tmxFile.getParentFile();
+        File file = new File(parentFile.getAbsolutePath() + "/" + source);
+
+        if (!file.exists()) {
+            throw new IllegalArgumentException("Couln't retrieve the image with path : " + file.getAbsolutePath());
+        }
+        
+        try {
+            // FIXME still doesn't work!!
+            return new Image(new FileInputStream(file));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TileCollectionCreator.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
+    
 
     /**
      * @param tileset The tileset from the map.

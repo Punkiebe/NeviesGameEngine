@@ -13,6 +13,7 @@ import be.nevies.game.engine.tiled.plugin.map.LayerType;
 import be.nevies.game.engine.tiled.plugin.map.Map;
 import be.nevies.game.engine.tiled.plugin.map.TileLayerType;
 import be.nevies.game.engine.tiled.plugin.tmx.ReadTmxFile;
+import java.io.File;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -30,9 +31,10 @@ public class TileLayerCreator {
     /* Logger. */
     private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TileLayerCreator.class);
 
-    public static Group createLayersForMap(Map map) {
+    public static Group createLayersForMap(Map map, File tmxFile) {
         Group mapGroup = new Group();
-        Collection<TileCollection> tileCollection = TileCollectionCreator.createTileCollectionsFromMap(map);
+        
+        Collection<TileCollection> tileCollection = TileCollectionCreator.createTileCollectionsFromMap(map, tmxFile);
         List<Serializable> layerOrObjectgroupOrImagelayer = map.getLayerOrObjectgroupOrImagelayer();
         Iterator<Serializable> iterator = layerOrObjectgroupOrImagelayer.iterator();
         for (Serializable serializable : layerOrObjectgroupOrImagelayer) {
@@ -65,20 +67,18 @@ public class TileLayerCreator {
             return layerGroup;
         }
 
-        long totalHorTiles = layer.getWidth() / tileWidth;
-        long totalVerTiles =  layer.getHeight() / tileHeight;
+        long totalHorTiles = layer.getWidth();
+        long totalVerTiles =  layer.getHeight();
         long countHorTiles = 0;
         long countVerTiles = 0;
-        
+        LOG.debug("totalHorTiles : {} , totalVerTiles : {}", totalHorTiles, totalVerTiles);
         List<Serializable> content = layer.getData().getContent();
         for (Serializable con : content) {
-            System.out.println(">> cont class : " + con.getClass());
             if (con instanceof JAXBElement) {
                 JAXBElement jaxbEl = (JAXBElement) con;
 
                 if (jaxbEl.getValue() instanceof TileLayerType) {
                     TileLayerType tileLayer = (TileLayerType) jaxbEl.getValue();
-                    System.out.println(">> tileLayer " + tileLayer.getGid());
                     long x = countHorTiles * tileWidth;
                     long y = countVerTiles * tileHeight;
                     countHorTiles++;

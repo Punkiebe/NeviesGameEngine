@@ -4,13 +4,19 @@
  */
 package be.nevies.game.engine.tiled.plugin.tmx;
 
+import be.nevies.game.engine.tiled.plugin.core.TileCollectionCreatorTest;
 import be.nevies.game.engine.tiled.plugin.map.LayerType;
 import be.nevies.game.engine.tiled.plugin.map.Map;
 import be.nevies.game.engine.tiled.plugin.map.ObjectgroupType;
 import be.nevies.game.engine.tiled.plugin.map.TileLayerType;
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import static org.junit.Assert.*;
 import org.junit.Test;
@@ -24,17 +30,22 @@ public class ReadTmxFileTest {
 
     @Test
     public void getMapFromTmxFile() throws IOException {
-        ReadTmxFile read = new ReadTmxFile();
+        URL resource = ReadTmxFile.class.getResource("/be/nevies/game/engine/tiled/plugin/example/firstHouseXML.tmx");
+        File file= null;
+        try {
+            file = new File(resource.toURI());
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(TileCollectionCreatorTest.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ReadTmxFile read = new ReadTmxFile(file);
         Map mapFromTmxFile = read.getMapFromTmxFile();
         assertNotNull(mapFromTmxFile);
-        assertEquals(3, mapFromTmxFile.getLayerOrObjectgroupOrImagelayer().size());
+        assertEquals(4, mapFromTmxFile.getLayerOrObjectgroupOrImagelayer().size());
         for (Serializable obj : mapFromTmxFile.getLayerOrObjectgroupOrImagelayer()) {
             if (obj instanceof LayerType) {
                 LayerType layer = (LayerType) obj;
                 if (layer.getData() != null) {
                     layer.getData().getContent();
-                    System.out.println(">> content list : " + layer.getData().getContent().size());
-                    System.out.println(">> content : " + layer.getData().getContent());
                     List<Serializable> content = layer.getData().getContent();
                     
                     for (Serializable con : content) {
