@@ -33,7 +33,7 @@ public class TileLayerCreatorTest {
         ReadTmxFile read = new ReadTmxFile(file);
         Map mapFromTmxFile = read.getMapFromTmxFile();
         assertNotNull(mapFromTmxFile);
-        Group groupMap = TileLayerCreator.createLayersForMap(mapFromTmxFile, file);
+        Group groupMap = TileLayerCreator.createGroupFromMap(mapFromTmxFile, file);
         assertNotNull(groupMap);
     }
 }

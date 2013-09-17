@@ -47,7 +47,7 @@ public class PlayGroundFour extends GameController {
         }
         ReadTmxFile read = new ReadTmxFile(file);
         Map map = read.getMapFromTmxFile();
-        Group layer = TileLayerCreator.createLayersForMap(map, file);
+        Group layer = TileLayerCreator.createGroupFromMap(map, file);
 
         getGameMainNode().getChildren().add(layer);
         LOG.debug("End loading map");

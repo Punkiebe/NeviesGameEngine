@@ -67,7 +67,7 @@
     </xs:complexType>
     
     <xs:complexType name="propertyType">
-        <xs:attribute name="key" type="xs:string" use="required" />
+        <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="value" type="xs:string" use="required" />
     </xs:complexType>
     
@@ -137,7 +137,7 @@
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="height" type="xs:nonNegativeInteger" />
         <xs:attribute name="width" type="xs:nonNegativeInteger" />
-        <xs:attribute name="X" type="xs:nonNegativeInteger" />
+        <xs:attribute name="x" type="xs:nonNegativeInteger" />
         <xs:attribute name="y" type="xs:nonNegativeInteger" />
         <xs:attribute name="opacity" type="opacityType" default="1" />
         <xs:attribute name="visible" type="visibleType" default="1" />
@@ -181,7 +181,7 @@
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" use="required" />
         <xs:attribute name="color" type="hexColourType" />
-        <xs:attribute name="X" type="xs:nonNegativeInteger" />
+        <xs:attribute name="x" type="xs:nonNegativeInteger" />
         <xs:attribute name="y" type="xs:nonNegativeInteger" />
         <xs:attribute name="width" type="xs:nonNegativeInteger" />
         <xs:attribute name="height" type="xs:nonNegativeInteger" />
@@ -201,7 +201,7 @@
         </xs:sequence>
         <xs:attribute name="name" type="xs:string" />
         <xs:attribute name="type" type="xs:string" />
-        <xs:attribute name="X" type="xs:nonNegativeInteger" use="required" />
+        <xs:attribute name="x" type="xs:nonNegativeInteger" use="required" />
         <xs:attribute name="y" type="xs:nonNegativeInteger" use="required" />
         <xs:attribute name="width" type="xs:nonNegativeInteger" />
         <xs:attribute name="height" type="xs:nonNegativeInteger" />
