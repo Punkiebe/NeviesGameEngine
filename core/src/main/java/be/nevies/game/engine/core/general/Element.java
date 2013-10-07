@@ -269,4 +269,16 @@ public abstract class Element<T extends Node> extends Parent {
             groupOfElement.getChildren().remove(this);
         }
     }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("Element[");
+        builder.append("Node id : ").append(node.getId()).append(", ");
+        builder.append("Node type : ").append(node.getClass().getName()).append(", ");
+        builder.append("Collision bounds : ").append(collisionBounds).append(", ");
+        builder.append("Behaviour types : ").append(behaviourTypes).append(", ");
+        builder.append("Group element : ").append(groupOfElement == null ? " - " : groupOfElement.getId());
+        builder.append("]");
+        return builder.toString();
+    }
 }

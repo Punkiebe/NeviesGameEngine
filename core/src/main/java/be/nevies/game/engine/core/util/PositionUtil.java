@@ -32,6 +32,7 @@ public final class PositionUtil {
             throw new IllegalArgumentException("None of the points given can be null!!");
         }
 
+        // FIXME code for swap has side effects!!
         boolean swap = false;
         if (pointTwoLine.getX() - pointOneLine.getX() != 0) {
             double corner = Math.tan((pointOneLine.getY() - pointTwoLine.getY()) / (pointTwoLine.getX() - pointOneLine.getX()));
@@ -105,8 +106,11 @@ public final class PositionUtil {
         Point2D firstLinePointTwo = new Point2D(sX + sW, sY + sH);
         Point2D secondLinePointOne = new Point2D(sX, sY + sH);
         Point2D secondLinePointTwo = new Point2D(sX + sW, sY);
+        LOG.trace("First line point one : {}, point two : {}.", firstLinePointOne, firstLinePointTwo);
+        LOG.trace("Second line point one : {}, point two : {}.", secondLinePointOne, secondLinePointTwo);
 
         Point2D pointToPosition = new Point2D((tX + (tW / 2)), (tY + (tH / 2)));
+        LOG.trace("Point to position : {}.", pointToPosition);
         PointPosition resultLineOne = getPointPositionTowardsLine(firstLinePointOne, firstLinePointTwo, pointToPosition);
         PointPosition resultLineTwo = getPointPositionTowardsLine(secondLinePointOne, secondLinePointTwo, pointToPosition);
 

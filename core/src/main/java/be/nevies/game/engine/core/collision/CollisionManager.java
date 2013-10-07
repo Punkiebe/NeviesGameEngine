@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +102,7 @@ public final class CollisionManager {
      * elements against all elements in the passive collection. If a collision was found then there's a GameEvent fired of the type 'COLLISION_EVENT' from the
      * element that was the source from the check. If it was a check from active elements against passive elements then the source is always the active element.
      * The method keeps checking till all elements are visit.
+     *
      * @TODO Rework the comments!!
      */
     public static void checkForCollisions() {
@@ -212,5 +214,43 @@ public final class CollisionManager {
      */
     public static GameEventObject getGameEventForLastCollision(Element element) {
         return getInstance().getResultMapLastCheck().get(element);
+    }
+
+    /* Helper methods */
+    /**
+     * Prints out the current content of the Map 'resultMapLastCheck'. The content is printed out on the 'INFO' level.
+     */
+    public static void printContentResultMapLastCheck() {
+        Map<Element, GameEventObject> map = getInstance().getResultMapLastCheck();
+        LOG.info("------ ResultMapLastCheck ------");
+        for (Element el : map.keySet()) {
+            GameEventObject eventObj = map.get(el);
+            LOG.info("The following element : {} has as last GameEventObject : {}.", el, eventObj);
+        }
+        LOG.info("--------------------------------");
+    }
+
+    /**
+     * Prints out the current elements in the active elements list. The print out is done on the INFO level of the logger.
+     */
+    public static void printActiveElements() {
+        LOG.info("--------- Active Elements ------");
+        ArrayList<Element> activeIter = new ArrayList<>(getInstance().activeElements);
+        for (Element el : activeIter) {
+            LOG.info("{}", el);
+        }
+        LOG.info("--------------------------------");
+    }
+
+    /**
+     * Prints out the current elements in the passive elements list. The print out is done on the INFO level of the logger.
+     */
+    public static void printPassiveElements() {
+        LOG.info("--------- Passive Elements ------");
+        ArrayList<Element> passiveIter = new ArrayList<>(getInstance().passiveElements);
+        for (Element el : passiveIter) {
+            LOG.info("{}", el);
+        }
+        LOG.info("--------------------------------");
     }
 }

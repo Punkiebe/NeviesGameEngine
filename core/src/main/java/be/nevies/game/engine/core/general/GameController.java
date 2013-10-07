@@ -1,7 +1,6 @@
 package be.nevies.game.engine.core.general;
 
 import be.nevies.game.engine.core.event.GameEvent;
-import java.util.logging.Level;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;

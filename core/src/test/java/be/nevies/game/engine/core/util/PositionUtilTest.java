@@ -178,7 +178,21 @@ public class PositionUtilTest {
         assertThat(directionReturned, is(Direction.BOTTOM));
         System.out.println("***********************************");
     }
-    
+
+    @Test
+    public void getDirectionOfTwoCollidedElementsExtra() {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "trace");
+        Bounds source;
+        Bounds target;
+        Direction directionReturned;
+        System.out.println("******* Special case **************");
+        source = new BoundingBox(0, 16, 32, 1000);
+        target = new BoundingBox(31, 75, 30, 30);
+        directionReturned = PositionUtil.getDirectionOfTwoCollidedElements(source, target);
+        assertThat(directionReturned, is(Direction.RIGHT));
+        System.out.println("***********************************");
+    }
+
     @Test
     public void getDistanceBetweenTwoPointsTest() {
         Point2D one = new Point2D(0, 0);
@@ -189,13 +203,13 @@ public class PositionUtilTest {
         assertThat(distance, is(10.0));
         distance = PositionUtil.getDistanceBetweenTwoPoints(two, one);
         assertThat(distance, is(10.0));
-        
+
         one = new Point2D(5, 5);
         two = new Point2D(10, 10);
         distance = PositionUtil.getDistanceBetweenTwoPoints(one, two);
-        assertThat(distance, is (7.0710678118654755));
+        assertThat(distance, is(7.0710678118654755));
     }
-    
+
     @Test
     public void getMiddlePointBetweenTwoPointsTest() {
         Point2D one = new Point2D(0, 0);

@@ -1,7 +1,7 @@
 package be.nevies.game.engine.core.event;
 
-import be.nevies.game.engine.core.util.Direction;
 import be.nevies.game.engine.core.general.Element;
+import be.nevies.game.engine.core.util.Direction;
 
 /**
  * This is an object so you can give extra information about the GameEvent thats been fired. You even can set here also an extra object of your choosing. The
@@ -73,5 +73,17 @@ public class GameEventObject {
      */
     public void setExtra(Object extra) {
         this.extra = extra;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("GameEventObject[");
+        builder.append("Source : ").append(source).append(", \n");
+        builder.append("Target : ").append(target).append(", \n");
+        builder.append("Object : ").append(extra).append(", \n");
+        builder.append("Direction : ").append(direction);
+        builder.append("]");
+        return builder.toString();
     }
 }
