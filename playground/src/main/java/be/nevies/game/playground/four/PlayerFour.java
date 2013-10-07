@@ -5,6 +5,8 @@
 package be.nevies.game.playground.four;
 
 import be.nevies.game.engine.core.general.Element;
+import be.nevies.game.engine.core.util.CollisionUtil;
+import be.nevies.game.engine.core.util.Direction;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
@@ -23,19 +25,27 @@ public class PlayerFour extends Element<Node> {
         showCollisionBounds();
     }
 
-    public void moveUp() {
-        moveY(-1);
+   public void moveUp() {
+        if (CollisionUtil.checkBeforeMove(this, Direction.TOP)) {
+            moveY(-1);
+        }
     }
 
     public void moveDown() {
-        moveY(+1);
+        if (CollisionUtil.checkBeforeMove(this, Direction.BOTTOM)) {
+            moveY(+1);
+        }
     }
 
     public void moveRight() {
-        moveX(+1);
+        if (CollisionUtil.checkBeforeMove(this, Direction.RIGHT)) {
+            moveX(+1);
+        }
     }
 
     public void moveLeft() {
-        moveX(-1);
+        if (CollisionUtil.checkBeforeMove(this, Direction.LEFT)) {
+            moveX(-1);
+        }
     }
 }

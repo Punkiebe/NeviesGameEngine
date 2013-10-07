@@ -87,7 +87,7 @@ public class PlayGroundOne extends GameController {
 
         player.setLayoutX(90);
         player.setLayoutY(40);
-        player.addBehaviour(PlayGroundOneBehaviour.NOT_CROSSABLE);
+//        player.addBehaviour(PlayGroundOneBehaviour.NOT_CROSSABLE);
 
         spriteGeorge.addBehaviour(PlayGroundOneBehaviour.NOT_CROSSABLE);
         spriteGeorge.addCollisionBounds(spriteGeorge.getBoundsInLocal());
@@ -189,10 +189,14 @@ public class PlayGroundOne extends GameController {
                         break;
                     case SPACE:
                         player.shootBullet(getGameMainNode());
+                        CollisionManager.printActiveElements();
+                        CollisionManager.printPassiveElements();
+                        CollisionManager.printContentResultMapLastCheck();
                         break;
                 }
             }
         };
         scene.setOnKeyPressed(movePlayerEvent);
+        //getGameMainNode().getScene().setOnKeyTyped(movePlayerEvent);
     }
 }
