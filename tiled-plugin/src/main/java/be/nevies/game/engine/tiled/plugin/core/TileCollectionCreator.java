@@ -27,6 +27,8 @@ import javafx.scene.image.Image;
 /**
  *
  * @author drs
+ * 
+ * @since 1.0.0
  */
 public class TileCollectionCreator {
 

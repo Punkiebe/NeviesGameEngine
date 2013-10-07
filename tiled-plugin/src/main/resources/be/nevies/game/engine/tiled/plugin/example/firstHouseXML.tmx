@@ -5031,16 +5031,19 @@
  </layer>
  <objectgroup color="#ff0000" name="CollisionLayer" width="50" height="50">
   <properties>
-   <property name="BaseClass" value="be.nevies.game.engine.core.general.BehaviourType"/>
+   <property name="BehaviourClass" value="be.nevies.game.engine.core.general.BehaviourType"/>
+   <property name="BehaviourTypes" value="NOT_CROSSABLE"/>
+   <property name="Handler" value="be.nevies.game.engine.tiled.plugin.core.DefaultPropertiesHandler"/>
+   <property name="PassiveCollision" value="true"/>
   </properties>
-  <object name="area1" type="NOT_CROSSABLE" x="0" y="0" width="800" height="32"/>
-  <object name="area2" type="NOT_CROSSABLE" x="0" y="16" width="32" height="576"/>
+  <object name="area1" x="0" y="0" width="800" height="32"/>
+  <object name="area2" x="0" y="16" width="32" height="576"/>
  </objectgroup>
  <objectgroup color="#aa55ff" name="InterationLayer" width="50" height="50">
   <properties>
-   <property name="BaseClass" value="be.nevies.game.playground.four.PlayGroundFourBehaviour"/>
+   <property name="Handler" value=""/>
   </properties>
-  <object name="popupone" type="POPUP_WINDOW" x="48" y="48" width="32" height="80">
+  <object name="popupone" type="Wanne sleep?" x="48" y="48" width="32" height="80">
    <ellipse/>
   </object>
  </objectgroup>

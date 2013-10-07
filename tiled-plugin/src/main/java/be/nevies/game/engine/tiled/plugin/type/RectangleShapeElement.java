@@ -10,12 +10,12 @@ import javafx.scene.shape.Rectangle;
 /**
  *
  * @author drs
+ *
+ * @since 1.0.0
  */
 public class RectangleShapeElement extends Element<Rectangle> {
 
     public RectangleShapeElement(Rectangle node) {
         super(node);
     }
-    
-    
 }

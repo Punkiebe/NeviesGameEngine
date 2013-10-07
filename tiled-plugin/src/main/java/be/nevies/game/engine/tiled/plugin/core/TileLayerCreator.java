@@ -13,12 +13,11 @@ import be.nevies.game.engine.tiled.plugin.map.Map;
 import be.nevies.game.engine.tiled.plugin.map.ObjectType;
 import be.nevies.game.engine.tiled.plugin.map.ObjectgroupType;
 import be.nevies.game.engine.tiled.plugin.map.PropertiesType;
-import be.nevies.game.engine.tiled.plugin.map.PropertyType;
 import be.nevies.game.engine.tiled.plugin.map.TileLayerType;
 import be.nevies.game.engine.tiled.plugin.type.RectangleShapeElement;
+import be.nevies.game.engine.tiled.plugin.util.TiledPluginUtil;
 import java.io.File;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +29,8 @@ import org.slf4j.LoggerFactory;
 /**
  *
  * @author drs
+ * 
+ * @since 1.0.0
  */
 public class TileLayerCreator {
 
@@ -78,13 +79,19 @@ public class TileLayerCreator {
     public static Group createObjectGroup(ObjectgroupType objGroup) {
         Group group = new Group();
         PropertiesType properties = objGroup.getProperties();
-        String baseClassStr = getValueForKeyFromProperties(properties, "BaseClass");
-        Class<?> baseClass = null;
-        if (baseClassStr != null && !"".equals(baseClassStr)) {
+        String handlerStr = TiledPluginUtil.getValueForKeyFromProperties(properties, "Handler");
+        PropertiesHandler handler = null;
+        if (handlerStr != null && !"".equals(handlerStr)) {
             try {
-                baseClass = ClassLoader.getSystemClassLoader().loadClass(baseClassStr);
-            } catch (ClassNotFoundException ex) {
-                LOG.warn("Couldn't load the BaseClass : {}", baseClassStr);
+                Class<?> handlerClass = null;
+                handlerClass = ClassLoader.getSystemClassLoader().loadClass(handlerStr);
+                if (!PropertiesHandler.class.isAssignableFrom(handlerClass)) {
+                    LOG.error("Your Handler class should implement the PropertiesHandler interface!!");
+                    return null;
+                }
+                handler = (PropertiesHandler) handlerClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException ex) {
+                LOG.warn("Couldn't load the handler : {}", handlerStr);
                 return null;
             }
         }
@@ -100,21 +107,22 @@ public class TileLayerCreator {
                 // TODO
             } else {
                 // normal
-                el = new RectangleShapeElement(new Rectangle(objectType.getX(), objectType.getY(), objectType.getWidth(), objectType.getHeight()));
+                long x = objectType.getX() == null ? 0 : objectType.getX();
+                long y = objectType.getY() == null ? 0 : objectType.getY();
+                long w = objectType.getWidth() == null ? 0 : objectType.getWidth();
+                long h = objectType.getHeight() == null ? 0 : objectType.getHeight();
+                el = new RectangleShapeElement(new Rectangle(x, y, w, h));
             }
             if (el == null) {
                 LOG.info("Couldn't  create an element for object type : {}", objectType.getName());
                 continue;
             }
             el.setId(objectType.getName());
-            el.addCollisionBounds(el.getBoundsInLocal());
-            if (baseClass != null) {
-                try {
-                    Field field = baseClass.getField(objectType.getType());
-                    el.addBehaviour(field.getName());
-                } catch (NoSuchFieldException | SecurityException ex) {
-                    LOG.warn("Couldn't find the Field : {} from the BaseClass : {}", objectType.getType(), baseClass);
-                }
+            if (handler != null) {
+                // Handle the properties of the objectGroupType
+                handler.handleProperties(el, properties);
+                // Handle the properties of the objectType
+                handler.handleProperties(el, objectType.getProperties());
             }
             group.getChildren().add(el);
         }
@@ -204,25 +212,4 @@ public class TileLayerCreator {
         return null;
     }
 
-    /**
-     * @param properties THe PropertiesType object that holds the properties.
-     * @param key The key. It uses the 'equalsIgnoreCase'.
-     * @return The value for the key. It returns null if it was not found, or if one of the method arguments where null.
-     */
-    private static String getValueForKeyFromProperties(PropertiesType properties, String key) {
-        if (properties == null) {
-            LOG.warn("You tried to get the value from an PropertiesType object that is null!!");
-            return null;
-        }
-        if (key == null || "".equals(key)) {
-            LOG.warn("You tried to get value from an empty key!!");
-            return null;
-        }
-        for (PropertyType prop : properties.getProperty()) {
-            if (key.equalsIgnoreCase(prop.getName())) {
-                return prop.getValue();
-            }
-        }
-        return null;
-    }
 }
