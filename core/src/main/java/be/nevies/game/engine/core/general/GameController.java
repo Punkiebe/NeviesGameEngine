@@ -48,31 +48,20 @@ public abstract class GameController {
     private final int soundUpdatesPerSecond;
 
     /**
-     * Constructor that will create a game scene with a Group node attached to it and add this scene to the given stage. It will also create the game update
-     * time line, but doesn't start it yet! It creates the Sound updates time line, but doesn't start it yet!
+     * Constructor that will create the games main group node. It will also create the game update time line, but doesn't start it yet! It creates the Sound
+     * updates time line, but doesn't start it yet!
      *
-     * @param stage The stage of this game.
      * @param gups Game updates per second.
      * @param sups Sound updates per second.
      * @param title Title of the games window.
-     * @param widthWindow Width of the game window.
-     * @param heightWindow Height of the game window.
      */
-    public GameController(Stage stage, int gups, int sups, String title, double widthWindow, double heightWindow) {
-        if (stage == null) {
-            throw new IllegalArgumentException("The given Stage was null!! Stage can't be null to create a GameController.");
-        }
-        gameStage = stage;
+    public GameController(int gups, int sups, String title) {
         gameUpdatesPerSecond = gups;
         soundUpdatesPerSecond = sups;
         gameTitle = title;
 
         gameMainNode = new Group();
         gameMainNode.setId("GameMainNode");
-        gameScene = new Scene(gameMainNode, widthWindow, heightWindow);
-
-        gameStage.setTitle(title);
-        gameStage.setScene(gameScene);
 
         initialiseGameUpdateTimeline();
         initialiseSoundUpdateTimeline();
@@ -112,9 +101,16 @@ public abstract class GameController {
     }
 
     /**
-     * Initialise the rest of your game. This method you need to call once the GameController is created.
+     * Initialise the rest of your game. This method you need to call once the GameController is created.<br/> This method shouldn't call any object that only
+     * can be modified on the JavaFX Application Thread!
      */
     public abstract void initialise();
+
+    /**
+     * Define all the input events that need to be attached to the scene.<br/> This is also called in the method 'createGameScene'. So normally there's no need
+     * to call this your self.
+     */
+    public abstract void defineSceneEvents(Scene scene);
 
     /**
      * This method is called each time a game update is done.
@@ -218,6 +214,22 @@ public abstract class GameController {
     }
 
     /**
+     * This creates the scene for the game, and if a stage is given it will add the scene tot the given stage. After creating the scene it calls also the
+     * 'defineScenEvents' method.
+     *
+     * @param widthWindow Width of the game window.
+     * @param heightWindow Height of the game window.
+     * @param stage The stage of the game. If you give the stage here, then there's no need to call 'setGameStage' after.
+     */
+    public void createGameScene(double widthWindow, double heightWindow, Stage stage) {
+        gameScene = new Scene(getGameMainNode(), widthWindow, heightWindow);
+        defineSceneEvents(gameScene);
+        if (stage != null) {
+            setGameStage(stage);
+        }
+    }
+
+    /**
      * Get current game scene.
      *
      * @return Scene The JavaFX scene graph.
@@ -227,11 +239,14 @@ public abstract class GameController {
     }
 
     /**
-     * This will set a new scene for you game. Default there already a scene created for you! This new scene is set to the game stage also.
+     * This will set a new scene for you game. This new scene is set to the game stage also.
      *
      * @param scene The game scene.
      */
     protected void setGameScene(Scene scene) {
+        if (gameStage == null) {
+            throw new IllegalAccessError("Can't set the game scene if the game stage isn't set!!");
+        }
         if (scene == null) {
             throw new IllegalArgumentException("You can't set the scene to null!!");
         }
@@ -259,5 +274,19 @@ public abstract class GameController {
         } catch (IllegalAccessException ex) {
             LOG.error("The following error was thrown when adding an element to the main game node. {}", ex.getMessage());
         }
+    }
+
+    /**
+     * Setting the game stage we'll add the game scene to the game stage.
+     *
+     * @param stage The stage for this GameController.
+     */
+    public void setGameStage(Stage stage) {
+        if (getGameScene() == null) {
+            throw new IllegalAccessError("Can't set the game stage if the game scene isn't set!!");
+        }
+        gameStage = stage;
+        gameStage.setScene(getGameScene());
+        gameStage.setTitle(gameTitle);
     }
 }
