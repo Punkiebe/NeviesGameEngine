@@ -39,14 +39,12 @@ public class PlayGroundOne extends GameController {
 
     PlayerOne player = new PlayerOne();
 
-    public PlayGroundOne(Stage stage, int gups, int sups, String title, double widthWindow, double heightWindow) {
-        super(stage, gups, sups, title, widthWindow, heightWindow);
+    public PlayGroundOne(int gups, int sups, String title) {
+        super(gups, sups, title);
     }
 
     @Override
     public void initialise() {
-        setupInput(getGameScene());
-
         FreeTileSetVersion9Mapper tileSet = new FreeTileSetVersion9Mapper();
         Sprite sprite1 = tileSet.getSprite(FreeTileSetVersion9Mapper.TILE_GROUND_TYPE_1);
         sprite1.setX(40);
@@ -120,7 +118,6 @@ public class PlayGroundOne extends GameController {
         });
 
         sprite2.addEventHandler(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
-
             @Override
             public void handle(GameEvent t) {
                 System.out.println(">>Handle bullet");
@@ -132,29 +129,6 @@ public class PlayGroundOne extends GameController {
                     target.removeElement();
                     CollisionManager.removeElement(target);
                 }
-            }
-            
-        });
-
-//        getGameScene().addEventFilter(GameEvent.ANY, new EventHandler<GameEvent>() {
-//            @Override
-//            public void handle(GameEvent t) {
-//                System.out.println("Filter any game event : " + t.toString());
-//            }
-//        });
-
-//        getGameScene().addEventFilter(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
-//            @Override
-//            public void handle(GameEvent t) {
-//                System.out.println("Filter collision event : " + t.toString());
-//            }
-//        });
-
-        getGameScene().addEventHandler(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
-            @Override
-            public void handle(GameEvent t) {
-                // System.out.println("Game update event check collision : " + t.toString());
-                CollisionManager.checkForCollisions();
             }
         });
 
@@ -170,7 +144,8 @@ public class PlayGroundOne extends GameController {
         }
     }
 
-    private void setupInput(Scene scene) {
+    @Override
+    public void defineSceneEvents(Scene scene) {
         EventHandler movePlayerEvent = new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
@@ -197,6 +172,30 @@ public class PlayGroundOne extends GameController {
             }
         };
         scene.setOnKeyPressed(movePlayerEvent);
-        //getGameMainNode().getScene().setOnKeyTyped(movePlayerEvent);
+        
+        
+        
+//        getGameScene().addEventFilter(GameEvent.ANY, new EventHandler<GameEvent>() {
+//            @Override
+//            public void handle(GameEvent t) {
+//                System.out.println("Filter any game event : " + t.toString());
+//            }
+//        });
+
+//        getGameScene().addEventFilter(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
+//            @Override
+//            public void handle(GameEvent t) {
+//                System.out.println("Filter collision event : " + t.toString());
+//            }
+//        });
+
+        scene.addEventHandler(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
+            @Override
+            public void handle(GameEvent t) {
+                // System.out.println("Game update event check collision : " + t.toString());
+                CollisionManager.checkForCollisions();
+            }
+        });
+        
     }
 }

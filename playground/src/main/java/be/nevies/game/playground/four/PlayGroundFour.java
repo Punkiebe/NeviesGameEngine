@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.nevies.game.playground.four;
 
 import be.nevies.game.engine.core.collision.CollisionManager;
@@ -43,11 +39,10 @@ public class PlayGroundFour extends GameController {
 
     /* Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PlayGroundFour.class);
-    
     private PlayerFour player = new PlayerFour();
 
-    public PlayGroundFour(Stage stage, int gups, int sups, String title, double widthWindow, double heightWindow) {
-        super(stage, gups, sups, title, widthWindow, heightWindow);
+    public PlayGroundFour(int gups, int sups, String title) {
+        super(gups, sups, title);
     }
 
     @Override
@@ -106,7 +101,7 @@ public class PlayGroundFour extends GameController {
             }
         });
         labelLastCheck.setTextFill(Color.WHITE);
-        
+
         labelLastCheck.setSkin(new ButtonSkin<>(labelLastCheck));
 
         VBox menuVbox = VBoxBuilder.create()
@@ -118,8 +113,6 @@ public class PlayGroundFour extends GameController {
 
         MenuBox menuBox = new MenuBox(menuVbox);
         addElementToGameMainNode(menuBox);
-       
-        setupInput(getGameScene());
     }
 
     @Override
@@ -127,11 +120,12 @@ public class PlayGroundFour extends GameController {
         CollisionManager.checkForCollisions();
     }
 
-    private void setupInput(Scene scene) {
+    @Override
+    public void defineSceneEvents(Scene scene) {
         EventHandler movePlayerEvent = new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                System.out.println(">> event "+ t);
+                System.out.println(">> event " + t);
                 switch (t.getCode()) {
                     case UP:
                         player.moveUp();
@@ -146,10 +140,9 @@ public class PlayGroundFour extends GameController {
                         player.moveRight();
                         break;
                 }
-           //     t.consume();
+                //     t.consume();
             }
         };
         scene.setOnKeyPressed(movePlayerEvent);
-       // getGameMainNode().setOnKeyTyped(movePlayerEvent);
     }
 }

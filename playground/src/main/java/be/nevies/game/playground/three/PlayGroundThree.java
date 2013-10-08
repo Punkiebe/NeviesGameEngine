@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.nevies.game.playground.three;
 
 import be.nevies.game.engine.core.event.GameEvent;
@@ -9,15 +5,16 @@ import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.sound.SoundElement;
 import be.nevies.game.engine.core.sound.SoundManager;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Controller for PlayGroundThree.
  *
  * @author drs
  */
@@ -34,8 +31,8 @@ public class PlayGroundThree extends GameController {
     public static final String STATIC_NOISE_TV_SOUND = "static_noise_tv_sound";
     private PlayerThree player = new PlayerThree();
 
-    public PlayGroundThree(Stage stage, int gups, int sups, String title, double widthWindow, double heightWindow) {
-        super(stage, gups, sups, title, widthWindow, heightWindow);
+    public PlayGroundThree(int gups, int sups, String title) {
+        super(gups, sups, title);
     }
 
     @Override
@@ -89,8 +86,6 @@ public class PlayGroundThree extends GameController {
                 // nothing for the moment
             }
         });
-
-        setupInput(getGameScene());
     }
 
     @Override
@@ -98,7 +93,8 @@ public class PlayGroundThree extends GameController {
         SoundManager.staticCheckForCollisions();
     }
 
-    private void setupInput(Scene scene) {
+    @Override
+    public void defineSceneEvents(Scene scene) {
         EventHandler movePlayerEvent = new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {

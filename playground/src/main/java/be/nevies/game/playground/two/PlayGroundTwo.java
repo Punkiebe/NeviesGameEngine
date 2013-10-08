@@ -1,21 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.nevies.game.playground.two;
 
 import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.general.BehaviourType;
-import be.nevies.game.engine.core.general.Element;
 import be.nevies.game.engine.core.general.GameController;
 import java.util.Random;
 import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonBuilder;
@@ -25,9 +18,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 
 /**
+ * The controller for PlayGroundTwo.
  *
  * @author drs
  */
@@ -35,14 +28,14 @@ public class PlayGroundTwo extends GameController {
 
     private final static Label NUM_SPRITES_FIELD = new Label();
 
-    public PlayGroundTwo(Stage stage, int gups, int sups, String title, double widthWindow, double heightWindow) {
-        super(stage, gups, sups, title, widthWindow, heightWindow);
+    public PlayGroundTwo(int gups, int sups, String title) {
+        super(gups, sups, title);
     }
 
     @Override
     public void initialise() {
         final Timeline gameLoop = getGameUpdatesTimeline();
-        
+
         VBox stats = VBoxBuilder.create()
                 .spacing(5)
                 .translateX(10)
@@ -77,29 +70,24 @@ public class PlayGroundTwo extends GameController {
             }
         }).build()).build(); // (VBox) stats on children
         MenuBox menu = new MenuBox(stats);
-        
+
         // lay down the controls
         addElementToGameMainNode(menu);
 
-        getGameScene().addEventFilter(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
+        getGameMainNode().addEventFilter(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
             @Override
             public void handle(GameEvent t) {
                 System.out.println("Filter game event : " + t.toString());
                 handleMoveAtoms();
                 CollisionManager.checkForCollisions();
+                t.consume();
             }
         });
-
-
-
-        generateManySpheres(10);
     }
 
     @Override
-    protected void handleGameUpdate() {
-        super.handleGameUpdate();
-        System.out.println(">> handle game update method");
-        //handleMoveAtoms();
+    public void defineSceneEvents(Scene scene) {
+        // No events for the scene
     }
 
     /**

@@ -16,13 +16,18 @@ import javafx.stage.Stage;
  */
 public class PlayGroundOneLauncher extends Application {
     
-    GameController playGroundOne;
-
+    private GameController playGroundOne;
+    
+    @Override
+    public void init() throws Exception {
+        super.init();
+        playGroundOne = new PlayGroundOne(60, 60, "Play ground one.");
+        playGroundOne.initialise();
+    }
+    
     @Override
     public void start(Stage stage) throws Exception {
-        
-        playGroundOne = new PlayGroundOne(stage, 60, 60, "Play ground one.", 800, 640);
-        playGroundOne.initialise();
+        playGroundOne.createGameScene(600, 600, stage);
         playGroundOne.startGameUpdateTimeline();
         ScenicView.show(stage.getScene());
         stage.show();
@@ -33,7 +38,6 @@ public class PlayGroundOneLauncher extends Application {
         System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
         launch(args);
     }
-    
     
     @Override
     public void stop() throws Exception {

@@ -1,27 +1,31 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package be.nevies.game.playground.two;
 
 import be.nevies.game.engine.core.general.GameController;
-import be.nevies.game.engine.core.sound.SoundManager;
-import com.javafx.experiments.scenicview.ScenicView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- *
+ * The launcher for PlayGroundTwo.
+ * In this playground we have the atom create and remove when they collide example.
+ * 
  * @author drs
  */
 public class PlayGroundTwoLauncher extends Application {
 
     private GameController controller;
+
+    @Override
+    public void init() throws Exception {
+        super.init();
+        controller = new PlayGroundTwo(30, 30, "Play ground two. Atom all around.");
+        controller.initialise();
+    }
+    
+    
     
     @Override
     public void start(Stage stage) throws Exception {
-        controller = new PlayGroundTwo(stage, 30, 30, "Play ground two. Atom all around.", 600, 600);
-        controller.initialise();
+        controller.createGameScene(600, 600, stage);
         controller.startGameUpdateTimeline();
         // ScenicView.show(stage.getScene());
         stage.show();
