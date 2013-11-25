@@ -7,20 +7,20 @@ package be.nevies.game.engine.tiled.plugin.core;
 import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.general.BehaviourType;
 import be.nevies.game.engine.core.general.Element;
+import be.nevies.game.engine.core.sound.SoundElement;
+import be.nevies.game.engine.core.sound.SoundManager;
 import be.nevies.game.engine.tiled.plugin.map.PropertiesType;
 import be.nevies.game.engine.tiled.plugin.map.PropertyType;
 import be.nevies.game.engine.tiled.plugin.util.TiledPluginUtil;
 import java.lang.reflect.Field;
 import java.util.List;
+import javafx.scene.media.AudioClip;
 import org.slf4j.LoggerFactory;
 
 /**
- * Extend your PropertiesHandler from this class, then the following things are handled from the core module :
- * <ul>
- * <li>Adding Behaviour to your element</li>
- * <li>Adding your element to the CollisionManager(passive and active)</li>
- * </ul>
- * 
+ * Extend your PropertiesHandler from this class, then the following things are handled from the core module : <ul> <li>Adding Behaviour to your element</li>
+ * <li>Adding your element to the CollisionManager(passive and active)</li> </ul>
+ *
  * @author drs
  */
 public class DefaultPropertiesHandler implements PropertiesHandler {
@@ -50,8 +50,32 @@ public class DefaultPropertiesHandler implements PropertiesHandler {
                 case "PassiveCollision":
                     handlePassiveCollision(element, property);
                     break;
+                case "MusicSource":
+                    handleMusicSource(element, property, properties);
+                    break;
             }
         }
+    }
+
+    private void handleMusicSource(Element element, PropertyType property, PropertiesType properties) {
+        String sourceStr = property.getValue();
+        LOG.trace("Handle name 'MusicSource' with value '{}'.", sourceStr);
+        if (sourceStr == null || "".equals(sourceStr)) {
+            return;
+        }
+        AudioClip audio = new AudioClip("jar:" + sourceStr);
+        
+        SoundElement soundElement = new SoundElement(audio);
+        String volumeStr = TiledPluginUtil.getValueForKeyFromProperties(properties, "MusicVolume");
+        if (volumeStr != null && !"".equals(volumeStr)) {
+            try {
+                int volume = Integer.parseInt(volumeStr);
+                soundElement.setVolume(volume / 100);
+            } catch (NumberFormatException nfe) {
+                LOG.warn("The text in MusicVolume wasn't a number!!");
+            }
+        }
+        SoundManager.addSoundElement(property.getName(), soundElement);
     }
 
     private void handleBehaviourClass(Element element, PropertyType property, PropertiesType properties) {
@@ -84,9 +108,8 @@ public class DefaultPropertiesHandler implements PropertiesHandler {
     }
 
     /**
-     * Adds the element to the passiveElement list of the CollisionManager.
-     * The collision bounds are set also, to the local bounds of the element.
-     * 
+     * Adds the element to the passiveElement list of the CollisionManager. The collision bounds are set also, to the local bounds of the element.
+     *
      * @param element The element.
      * @param property The property with name 'PassiveCollision'.
      */

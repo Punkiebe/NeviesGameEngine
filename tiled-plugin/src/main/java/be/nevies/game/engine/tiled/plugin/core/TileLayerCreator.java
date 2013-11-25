@@ -50,7 +50,6 @@ public class TileLayerCreator {
 
         Collection<TileCollection> tileCollection = TileCollectionCreator.createTileCollectionsFromMap(map, tmxFile);
         List<Serializable> layerOrObjectgroupOrImagelayer = map.getLayerOrObjectgroupOrImagelayer();
-        Iterator<Serializable> iterator = layerOrObjectgroupOrImagelayer.iterator();
         for (Serializable serializable : layerOrObjectgroupOrImagelayer) {
             if (serializable instanceof LayerType) {
                 LayerType layer = (LayerType) serializable;

@@ -5029,7 +5029,7 @@
    <tile gid="96"/>
   </data>
  </layer>
- <objectgroup color="#ff0000" name="CollisionLayer" width="50" height="50">
+ <objectgroup color="#ff0000" name="CollisionLayer" width="50" height="50" visible="0">
   <properties>
    <property name="BehaviourClass" value="be.nevies.game.engine.core.general.BehaviourType"/>
    <property name="BehaviourTypes" value="NOT_CROSSABLE"/>
@@ -5039,12 +5039,21 @@
   <object name="area1" x="0" y="0" width="800" height="32"/>
   <object name="area2" x="0" y="16" width="32" height="576"/>
  </objectgroup>
- <objectgroup color="#aa55ff" name="InterationLayer" width="50" height="50">
+ <objectgroup color="#aa55ff" name="InterationLayer" width="50" height="50" visible="0">
   <properties>
    <property name="Handler" value=""/>
   </properties>
   <object name="popupone" type="Wanne sleep?" x="48" y="48" width="32" height="80">
    <ellipse/>
   </object>
+ </objectgroup>
+ <objectgroup color="#2578a4" name="MusicLayer" width="50" height="50">
+  <properties>
+   <property name="Handler" value="be.nevies.game.engine.tiled.plugin.core.DefaultPropertiesHandler"/>
+   <property name="MusicSource" value="/be/nevies/game/engine/tiled/plugin/example/music/classical_piano_music_track_mary_.mp3"/>
+   <property name="MusicVolume" value="20"/>
+  </properties>
+  <object name="ChamberMusic" x="32" y="32" width="288" height="224"/>
+  <object name="BureauMusic" x="352" y="32" width="416" height="224"/>
  </objectgroup>
 </map>

@@ -40,7 +40,7 @@ public class ReadTmxFileTest {
         ReadTmxFile read = new ReadTmxFile(file);
         Map mapFromTmxFile = read.getMapFromTmxFile();
         assertNotNull(mapFromTmxFile);
-        assertEquals(4, mapFromTmxFile.getLayerOrObjectgroupOrImagelayer().size());
+        assertEquals(5, mapFromTmxFile.getLayerOrObjectgroupOrImagelayer().size());
         for (Serializable obj : mapFromTmxFile.getLayerOrObjectgroupOrImagelayer()) {
             if (obj instanceof LayerType) {
                 LayerType layer = (LayerType) obj;
