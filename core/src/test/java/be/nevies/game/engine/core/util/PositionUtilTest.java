@@ -189,7 +189,7 @@ public class PositionUtilTest {
         source = new BoundingBox(0, 16, 32, 1000);
         target = new BoundingBox(31, 75, 30, 30);
         directionReturned = PositionUtil.getDirectionOfTwoCollidedElements(source, target);
-     // FIXME   assertThat(directionReturned, is(Direction.RIGHT));
+        assertThat(directionReturned, is(Direction.RIGHT));
         System.out.println("***********************************");
     }
 

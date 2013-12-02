@@ -35,13 +35,14 @@ public final class PositionUtil {
         // FIXME code for swap has side effects!!
         boolean swap = false;
         if (pointTwoLine.getX() - pointOneLine.getX() != 0) {
-            double corner = Math.tan((pointOneLine.getY() - pointTwoLine.getY()) / (pointTwoLine.getX() - pointOneLine.getX()));
-            if (corner > 0) {
+            double slope = (pointTwoLine.getY() - pointOneLine.getY()) / (pointTwoLine.getX() - pointOneLine.getX());
+            //double corner = Math.tan((pointOneLine.getY() - pointTwoLine.getY()) / (pointTwoLine.getX() - pointOneLine.getX()));
+            if (slope < 0) {
                 swap = true;
             }
         }
         double result = ((pointTwoLine.getX() - pointOneLine.getX()) * (pointToPosition.getY() - pointOneLine.getY()) - (pointTwoLine.getY() - pointOneLine.getY()) * (pointToPosition.getX() - pointOneLine.getX()));
-
+        
         if (result > 0) {
             return swap ? PointPosition.RIGHT : PointPosition.LEFT;
         } else if (result < 0) {
@@ -49,7 +50,7 @@ public final class PositionUtil {
         } else if (result == 0) {
             return PointPosition.ON;
         }
-
+        
         throw new IllegalStateException("This can never happen!!");
     }
 
@@ -98,24 +99,24 @@ public final class PositionUtil {
         double tY = target.getMinY();
         double tW = target.getWidth();
         double tH = target.getHeight();
-
+        
         printBoundInfo(source);
         printBoundInfo(target);
-
+        
         Point2D firstLinePointOne = new Point2D(sX, sY);
         Point2D firstLinePointTwo = new Point2D(sX + sW, sY + sH);
         Point2D secondLinePointOne = new Point2D(sX, sY + sH);
         Point2D secondLinePointTwo = new Point2D(sX + sW, sY);
         LOG.trace("First line point one : {}, point two : {}.", firstLinePointOne, firstLinePointTwo);
         LOG.trace("Second line point one : {}, point two : {}.", secondLinePointOne, secondLinePointTwo);
-
+        
         Point2D pointToPosition = new Point2D((tX + (tW / 2)), (tY + (tH / 2)));
         LOG.trace("Point to position : {}.", pointToPosition);
         PointPosition resultLineOne = getPointPositionTowardsLine(firstLinePointOne, firstLinePointTwo, pointToPosition);
         PointPosition resultLineTwo = getPointPositionTowardsLine(secondLinePointOne, secondLinePointTwo, pointToPosition);
-
+        
         LOG.trace("Point position for first line : {} , for second line : {}.", resultLineOne, resultLineTwo);
-
+        
         switch (resultLineOne.getCode() | (resultLineTwo.getCode() << 3)) {
             case 0b001_001:
                 return Direction.LEFT;
@@ -138,7 +139,7 @@ public final class PositionUtil {
             default:
                 break;
         }
-
+        
         return null;
     }
 
