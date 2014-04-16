@@ -53,9 +53,10 @@ public class SingleExecutorService extends ThreadPoolExecutor {
             throw new NullPointerException();
         }
         synchronized (this) {
-            if (currentCall == null || currentCall.isDone() || currentCall.isCancelled()) {
-                currentCall = super.submit(task);
-                return (Future<T>) currentCall;
+            if (currentTask == null || currentTask.isDone() || currentTask.isCancelled()) {
+                currentTask = newTaskFor(task);
+                execute(currentTask);
+                return (Future<T>) currentTask;
             } else {
                 LOG.warn("The Task wasn't submit because there is still a task running. Current : '{}' , Submitted : '{}'.", currentTask, task);
             }
@@ -65,12 +66,12 @@ public class SingleExecutorService extends ThreadPoolExecutor {
 
     @Override
     public <T> Future<T> submit(Runnable task, T result) {
-        super.submit(task, result);
         if (task == null) {
             throw new NullPointerException();
         }
         synchronized (this) {
             if (currentTask == null || currentTask.isDone() || currentTask.isCancelled()) {
+//                currentCall = super.submit(task, result);
                 currentTask = newTaskFor(task, result);
                 execute(currentTask);
                 return (Future<T>) currentTask;

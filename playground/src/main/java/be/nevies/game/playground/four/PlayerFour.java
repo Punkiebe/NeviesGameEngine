@@ -5,7 +5,7 @@
 package be.nevies.game.playground.four;
 
 import be.nevies.game.engine.core.general.Element;
-import be.nevies.game.engine.core.util.CollisionUtil;
+import be.nevies.game.engine.core.collision.CollisionUtil;
 import be.nevies.game.engine.core.util.Direction;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;

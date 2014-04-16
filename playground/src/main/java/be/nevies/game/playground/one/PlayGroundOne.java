@@ -12,30 +12,31 @@ import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.general.Element;
 import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.graphic.Sprite;
-import be.nevies.game.engine.core.util.CollisionUtil;
+import be.nevies.game.engine.core.collision.CollisionUtil;
 import be.nevies.game.engine.core.util.Direction;
 import javafx.animation.PathTransition;
 import javafx.animation.PathTransitionBuilder;
 import javafx.animation.Timeline;
 import javafx.event.EventHandler;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.CubicCurveTo;
 import javafx.scene.shape.LineTo;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
-import javafx.scene.shape.PathBuilder;
-import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author drs
  */
 public class PlayGroundOne extends GameController {
+    
+    /* Logger. */
+    private static final Logger LOG = LoggerFactory.getLogger(PlayGroundOne.class);
 
     PlayerOne player = new PlayerOne();
 
@@ -108,11 +109,10 @@ public class PlayGroundOne extends GameController {
                 .build();
         pathTransition.play();
 
-
         spriteGeorge.addEventHandler(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
             @Override
             public void handle(GameEvent t) {
-                System.out.println("Handle collision event sprite george : " + t.toString());
+                LOG.debug("Handle collision event sprite george : {}.", t);
                 handleGeorge(pathTransition, Direction.LEFT, spriteGeorge);
             }
         });
@@ -120,7 +120,7 @@ public class PlayGroundOne extends GameController {
         sprite2.addEventHandler(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
             @Override
             public void handle(GameEvent t) {
-                System.out.println(">>Handle bullet");
+                LOG.debug(">>Handle bullet");
                 Element source = t.getGameEventObject().getSource();
                 Element target = t.getGameEventObject().getTarget();
                 if (source.checkForBehaviour(PlayGroundOneBehaviour.BULLET_BEHAVIOUR)) {
@@ -172,30 +172,27 @@ public class PlayGroundOne extends GameController {
             }
         };
         scene.setOnKeyPressed(movePlayerEvent);
-        
-        
-        
+
 //        getGameScene().addEventFilter(GameEvent.ANY, new EventHandler<GameEvent>() {
 //            @Override
 //            public void handle(GameEvent t) {
 //                System.out.println("Filter any game event : " + t.toString());
 //            }
 //        });
-
 //        getGameScene().addEventFilter(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
 //            @Override
 //            public void handle(GameEvent t) {
 //                System.out.println("Filter collision event : " + t.toString());
 //            }
 //        });
-
         scene.addEventHandler(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
             @Override
             public void handle(GameEvent t) {
+                LOG.debug("Game update event : start collision check");
                 // System.out.println("Game update event check collision : " + t.toString());
-                CollisionManager.checkForCollisions();
+                CollisionManager.staticCheckForCollisions();
             }
         });
-        
+
     }
 }

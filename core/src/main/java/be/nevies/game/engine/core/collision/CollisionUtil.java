@@ -2,18 +2,23 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package be.nevies.game.engine.core.util;
+package be.nevies.game.engine.core.collision;
 
 import be.nevies.game.engine.core.collision.CollisionManager;
+import be.nevies.game.engine.core.collision.ReturnObjectCheckBounds;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.BehaviourType;
 import be.nevies.game.engine.core.general.Element;
+import be.nevies.game.engine.core.util.Direction;
+import be.nevies.game.engine.core.util.PositionUtil;
+import java.util.Collection;
+import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * This is an utility class for Collision related methods.
- * 
+ *
  * @author drs
  */
 public class CollisionUtil {
@@ -22,7 +27,8 @@ public class CollisionUtil {
     private static final Logger LOG = LoggerFactory.getLogger(CollisionUtil.class);
 
     /**
-     * Checks if an element didn't have any collisions with other element that have BehaviourType.NOT_CROSSABLE for the direction given.
+     * Checks if an element didn't have any collisions with other element that
+     * have BehaviourType.NOT_CROSSABLE for the direction given.
      *
      * @param element The element you want to check.
      * @param directionToMoveIn The direction you want to move in to.
@@ -73,5 +79,26 @@ public class CollisionUtil {
             LOG.error("You should never be able to reach here. Element : {} , Direction : {} .", element, directionToMoveIn);
         }
         return true;
+    }
+
+    /**
+     * Checks for two elements there collection of bounds for collision.
+     *
+     * @param boundsOne First collection of bounds.
+     * @param boundsTwo Second collection of bounds.
+     * @return A ReturnOBjectCheckBouns object that holds information if it
+     * there was a collision, and if so the direction.
+     */
+    public static ReturnObjectCheckBounds checkTwoCollectionsOfBounds(Collection<Rectangle> boundsOne, Collection<Rectangle> boundsTwo) {
+        for (Rectangle boundOne : boundsOne) {
+            for (Rectangle boundTwo : boundsTwo) {
+                boolean intersects = boundOne.getBoundsInParent().intersects(boundTwo.getBoundsInParent());
+                if (intersects) {
+                    Direction direction = PositionUtil.getDirectionOfTwoCollidedElements(boundTwo.getBoundsInParent(), boundOne.getBoundsInParent());
+                    return ReturnObjectCheckBounds.collisionResponsTrue(direction);
+                }
+            }
+        }
+        return ReturnObjectCheckBounds.collisionResponsFalse();
     }
 }

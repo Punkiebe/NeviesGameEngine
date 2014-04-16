@@ -46,7 +46,8 @@ public final class SoundManager {
     }
 
     /**
-     * Before you can use the SoundManager you need to initialise the SoundManager. This can be done by calling this method.
+     * Before you can use the SoundManager you need to initialise the
+     * SoundManager. This can be done by calling this method.
      *
      * @param mainGameNode Your main game node.
      */
@@ -91,11 +92,13 @@ public final class SoundManager {
     }
 
     /**
-     * This method we'll create of SoundElement using the AudioClip object and add it to the map of sounds. The AudioClip type is best used for smaller sound
-     * files, like sound effects.
+     * This method we'll create of SoundElement using the AudioClip object and
+     * add it to the map of sounds. The AudioClip type is best used for smaller
+     * sound files, like sound effects.
      *
      * @param name The name of the sound element.
-     * @param path The path of the AudioClip you want to add. It uses the getReource of class.
+     * @param path The path of the AudioClip you want to add. It uses the
+     * getReource of class.
      */
     public static void addSoundElementTypeAudioClip(String name, String path) {
         try {
@@ -106,11 +109,13 @@ public final class SoundManager {
     }
 
     /**
-     * This method we'll create of SoundElement using the Media object and add it to the map of sounds. The Media type is best used for larger sound files, like
-     * dialogs and music.
+     * This method we'll create of SoundElement using the Media object and add
+     * it to the map of sounds. The Media type is best used for larger sound
+     * files, like dialogs and music.
      *
      * @param name The name of the sound element.
-     * @param path The path of the Media you want to add. It uses the getReource of class.
+     * @param path The path of the Media you want to add. It uses the getReource
+     * of class.
      */
     public static void addSoundElementTypeMedia(String name, String path) {
         try {
@@ -124,7 +129,8 @@ public final class SoundManager {
      * Get a SoundElement based on the name.
      *
      * @param name The name of the sound element.
-     * @return The SoundElement or null if there's no sound element for the name.
+     * @return The SoundElement or null if there's no sound element for the
+     * name.
      */
     public static SoundElement getSoundElement(String name) {
         if (getInstance().soundMap.containsKey(name)) {
@@ -134,7 +140,8 @@ public final class SoundManager {
     }
 
     /**
-     * The main element is used to determen from where the sound is hearth from. This need to be set if you want to use the distance based sound option.
+     * The main element is used to determen from where the sound is hearth from.
+     * This need to be set if you want to use the distance based sound option.
      *
      * @param mainElement Your main element.
      */
@@ -150,14 +157,24 @@ public final class SoundManager {
     }
 
     /**
-     * This will check the main element against all the SoundElements that have a sound area. If there's a collision with a SoundElement the sound well be
-     * played. And if the 'volumeDistanceBased' is true then it we'll adapt the volume based on the distance oft he main element to the center of the sound
-     * area.
+     * This will check the main element against all the SoundElements that have
+     * a sound area. If there's a collision with a SoundElement the sound well
+     * be played. And if the 'volumeDistanceBased' is true then it we'll adapt
+     * the volume based on the distance oft he main element to the center of the
+     * sound area.
      */
     public void checkForCollisions() {
+        if (getInstance().mainElement == null) {
+            LOG.error("Can't check for collisions without a Main Element! Set the main element in the SoundManager.");
+            return;
+        }
+        if (!getInstance().mainElement.hasCollisionBounds()) {
+            LOG.error("The main element needs to have collision bounds! Add at least one collision bound to your element!");
+            return;
+        }
         soundCheckService.submit(new CheckForCollisionsTask(getInstance().mainElement.getCollisionBounds(), getInstance().soundMap.values()));
     }
-    
+
     /**
      * Stops collision checking.
      */
@@ -262,7 +279,8 @@ public final class SoundManager {
      * @param recOne First rectangle.
      * @param recTwo Second rectangle
      * @param distance The distance.
-     * @return The percentage based on distance. 0.0 means there the furthest away. 1.0 means there on top of each other.
+     * @return The percentage based on distance. 0.0 means there the furthest
+     * away. 1.0 means there on top of each other.
      */
     private static double calculatePercentageFromDistance(Rectangle recOne, Rectangle recTwo, double distance) {
         if (recOne == null || recTwo == null) {
@@ -294,8 +312,9 @@ public final class SoundManager {
     }
 
     /**
-     * Add the sound element to the sound group. This is needed to make sure the Element is know by the scene. This is only needed for SoundElement that have a
-     * sound area.
+     * Add the sound element to the sound group. This is needed to make sure the
+     * Element is know by the scene. This is only needed for SoundElement that
+     * have a sound area.
      *
      * @param sound The sound element.
      */

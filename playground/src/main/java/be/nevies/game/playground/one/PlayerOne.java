@@ -10,7 +10,7 @@ import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.BehaviourType;
 import be.nevies.game.engine.core.general.Element;
-import be.nevies.game.engine.core.util.CollisionUtil;
+import be.nevies.game.engine.core.collision.CollisionUtil;
 import java.util.Collection;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;

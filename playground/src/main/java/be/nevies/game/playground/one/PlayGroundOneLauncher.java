@@ -21,7 +21,7 @@ public class PlayGroundOneLauncher extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        playGroundOne = new PlayGroundOne(60, 60, "Play ground one.");
+        playGroundOne = new PlayGroundOne(60, 30, "Play ground one.");
         playGroundOne.initialise();
     }
     
@@ -29,7 +29,7 @@ public class PlayGroundOneLauncher extends Application {
     public void start(Stage stage) throws Exception {
         playGroundOne.createGameScene(600, 600, stage);
         playGroundOne.startGameUpdateTimeline();
-        ScenicView.show(stage.getScene());
+       // ScenicView.show(stage.getScene());
         stage.show();
     }
     

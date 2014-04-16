@@ -21,7 +21,7 @@ import org.junit.Test;
  */
 public class TileLayerCreatorTest {
     
-    @Test
+  //  @Test
     public void testCreateLayer() {
         URL resource = ReadTmxFile.class.getResource("/be/nevies/game/engine/tiled/plugin/example/firstHouseXML.tmx");
         File file= null;

@@ -79,7 +79,7 @@ public class PlayGroundTwo extends GameController {
             public void handle(GameEvent t) {
                 System.out.println("Filter game event : " + t.toString());
                 handleMoveAtoms();
-                CollisionManager.checkForCollisions();
+                CollisionManager.staticCheckForCollisions();
                 t.consume();
             }
         });

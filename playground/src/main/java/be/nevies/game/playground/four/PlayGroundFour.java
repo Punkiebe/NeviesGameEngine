@@ -117,7 +117,7 @@ public class PlayGroundFour extends GameController {
 
     @Override
     protected void handleGameUpdate() {
-        CollisionManager.checkForCollisions();
+        CollisionManager.staticCheckForCollisions();
     }
 
     @Override
