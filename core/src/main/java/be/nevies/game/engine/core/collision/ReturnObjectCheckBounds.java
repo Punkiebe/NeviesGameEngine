@@ -10,7 +10,7 @@ import be.nevies.game.engine.core.util.Direction;
 public final class ReturnObjectCheckBounds {
 
     private Direction direction;
-    private boolean collision;
+    private final boolean collision;
 
     /**
      * Default constructor for when a collision happened.

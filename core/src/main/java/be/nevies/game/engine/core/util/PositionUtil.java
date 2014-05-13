@@ -100,8 +100,8 @@ public final class PositionUtil {
         double tW = target.getWidth();
         double tH = target.getHeight();
         
-        printBoundInfo(source);
-        printBoundInfo(target);
+//        printBoundInfo(source);
+//        printBoundInfo(target);
         
         Point2D firstLinePointOne = new Point2D(sX, sY);
         Point2D firstLinePointTwo = new Point2D(sX + sW, sY + sH);

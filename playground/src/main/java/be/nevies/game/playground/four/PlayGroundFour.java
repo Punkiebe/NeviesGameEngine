@@ -2,6 +2,7 @@ package be.nevies.game.playground.four;
 
 import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.general.GameController;
+import be.nevies.game.engine.core.sound.SoundManager;
 import be.nevies.game.engine.tiled.plugin.core.TileLayerCreator;
 import be.nevies.game.engine.tiled.plugin.map.Map;
 import be.nevies.game.engine.tiled.plugin.tmx.ReadTmxFile;
@@ -48,6 +49,7 @@ public class PlayGroundFour extends GameController {
     @Override
     public void initialise() {
         LOG.debug("Start loading map");
+        SoundManager.initialise(getGameMainNode());
         URL resource = ReadTmxFile.class.getResource("/be/nevies/game/engine/tiled/plugin/example/firstHouseXML.tmx");
         File file = null;
         try {
@@ -66,6 +68,7 @@ public class PlayGroundFour extends GameController {
         //player.addBehaviour(PlayGroundFourBehaviour.NOT_CROSSABLE);
         getGameMainNode().getChildren().add(player);
         CollisionManager.addActiveElement(player);
+        SoundManager.setMainElement(player);
         Button button1 = ButtonBuilder.create()
                 .text("Print active elements.")
                 .onAction(new EventHandler() {
@@ -118,6 +121,11 @@ public class PlayGroundFour extends GameController {
     @Override
     protected void handleGameUpdate() {
         CollisionManager.staticCheckForCollisions();
+    }
+
+    @Override
+    protected void handleSoundUpdate() {
+        SoundManager.staticCheckForCollisions();
     }
 
     @Override

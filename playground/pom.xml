@@ -52,7 +52,7 @@
         <dependency>
             <groupId>com.javafx.experiments</groupId>
             <artifactId>scenicview</artifactId>
-            <version>1.3.0</version>
+            <version>8.0.0</version>
             <type>jar</type>
         </dependency>
         <dependency>

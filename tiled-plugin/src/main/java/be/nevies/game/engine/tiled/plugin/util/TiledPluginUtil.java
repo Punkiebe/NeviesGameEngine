@@ -44,4 +44,35 @@ public class TiledPluginUtil {
         }
         return null;
     }
+
+    /**
+     * Get the value as boolean for the given key from the properties.
+     * 
+     * @param properties THe PropertiesType object that holds the properties.
+     * @param key The key. It uses the 'equalsIgnoreCase'.
+     * @return The value for the key. It returns null if it was not found, or if one of the method arguments where null, or if the value wasn't a boolean.
+     */
+    public static Boolean getBooleanValueForKeyFromProperties(PropertiesType properties, String key) {
+        if (properties == null) {
+            LOG.warn("You tried to get the value from an PropertiesType object that is null!!");
+            return null;
+        }
+        if (key == null || "".equals(key)) {
+            LOG.warn("You tried to get value from an empty key!!");
+            return null;
+        }
+        for (PropertyType prop : properties.getProperty()) {
+            if (key.equalsIgnoreCase(prop.getName())) {
+                String value = prop.getValue();
+                if ("true".equalsIgnoreCase(value)) {
+                    return true;
+                } else if ("false".equalsIgnoreCase(value)) {
+                    return false;
+                }
+                LOG.warn("The value '{}' for the key '{}' wasn't 'true' or 'false'!", value, key);
+                return null;
+            }
+        }
+        return null;
+    }
 }

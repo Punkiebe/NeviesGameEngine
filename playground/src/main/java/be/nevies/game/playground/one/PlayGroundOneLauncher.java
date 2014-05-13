@@ -6,7 +6,6 @@ package be.nevies.game.playground.one;
 
 import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.sound.SoundManager;
-import com.javafx.experiments.scenicview.ScenicView;
 import javafx.application.Application;
 import javafx.stage.Stage;
 

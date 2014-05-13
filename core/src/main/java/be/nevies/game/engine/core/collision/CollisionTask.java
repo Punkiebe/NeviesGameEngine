@@ -53,7 +53,7 @@ public class CollisionTask extends Task<Map<Element, GameEventObject>> {
 
     @Override
     protected Map<Element, GameEventObject> call() throws Exception {
-        LOG.debug("Start checking for collisions.");
+        LOG.trace("Start checking for collisions.");
         Map<Element, GameEventObject> resultMap = new HashMap<>();
         ArrayList<Element> activeIter = new ArrayList<>(activeElements);
         int totalActive = activeIter.size();
@@ -110,7 +110,7 @@ public class CollisionTask extends Task<Map<Element, GameEventObject>> {
     @Override
     protected void succeeded() {
         super.succeeded();
-        LOG.debug("Collision task done. Fire events. Number of events to fire : {}", fireMap.size());
+       // LOG.debug("Collision task done. Fire events. Number of events to fire : {}", fireMap.size());
         fireMap.keySet().forEach(key -> fireMap.get(key).forEach(event -> key.fireEvent(event)));
     }
 

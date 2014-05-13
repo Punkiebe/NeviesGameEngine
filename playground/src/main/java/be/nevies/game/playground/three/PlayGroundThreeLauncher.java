@@ -1,10 +1,11 @@
 package be.nevies.game.playground.three;
 
+import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.sound.SoundManager;
-import com.javafx.experiments.scenicview.ScenicView;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.scenicview.ScenicView;
 
 /**
  * This play ground test the SoundManager.
@@ -18,7 +19,7 @@ public class PlayGroundThreeLauncher extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        controller = new PlayGroundThree(60, 1, "PlayGroundThree - test SoundManager");
+        controller = new PlayGroundThree(5, 5, "PlayGroundThree - test SoundManager");
         controller.initialise();
     }
 
@@ -28,7 +29,7 @@ public class PlayGroundThreeLauncher extends Application {
         controller.startGameUpdateTimeline();
         controller.startSoundUpdateTimeline();
         stage.show();
-        //ScenicView.show(stage.getScene());
+        ScenicView.show(stage.getScene());
     }
 
     public static void main(String[] args) {

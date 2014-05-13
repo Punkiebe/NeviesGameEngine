@@ -4,8 +4,6 @@
  */
 package be.nevies.game.engine.core.collision;
 
-import be.nevies.game.engine.core.collision.CollisionManager;
-import be.nevies.game.engine.core.collision.ReturnObjectCheckBounds;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.BehaviourType;
 import be.nevies.game.engine.core.general.Element;

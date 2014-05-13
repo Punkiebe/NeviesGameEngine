@@ -164,9 +164,9 @@ public class PlayGroundOne extends GameController {
                         break;
                     case SPACE:
                         player.shootBullet(getGameMainNode());
-                        CollisionManager.printActiveElements();
-                        CollisionManager.printPassiveElements();
-                        CollisionManager.printContentResultMapLastCheck();
+//                        CollisionManager.printActiveElements();
+//                        CollisionManager.printPassiveElements();
+//                        CollisionManager.printContentResultMapLastCheck();
                         break;
                 }
             }
@@ -188,7 +188,7 @@ public class PlayGroundOne extends GameController {
         scene.addEventHandler(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
             @Override
             public void handle(GameEvent t) {
-                LOG.debug("Game update event : start collision check");
+               // LOG.debug("Game update event : start collision check");
                 // System.out.println("Game update event check collision : " + t.toString());
                 CollisionManager.staticCheckForCollisions();
             }

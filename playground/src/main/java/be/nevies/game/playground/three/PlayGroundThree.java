@@ -50,7 +50,7 @@ public class PlayGroundThree extends GameController {
 
         SoundMenu menu = new SoundMenu(new VBox());
         //addElementToGameMainNode(menu);
-        SoundElement sound = SoundManager.getSoundElement(PIANO_MUSIC_TWO);
+        SoundElement sound = SoundManager.getSoundElement(PIANO_MUSIC);
         sound.setVolumeDistanceBased(true);
         sound.setBalanceDirectionBased(true);
         sound.setSoundArea(new Rectangle(100, 50, 100, 50));

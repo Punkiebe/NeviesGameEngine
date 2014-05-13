@@ -194,7 +194,7 @@ public class SoundElement {
      * @return True if this sound element has a sound area.
      */
     public boolean hasSoundArea() {
-        return soundArea == null ? false : true;
+        return soundArea != null;
     }
 
     /**
@@ -272,6 +272,7 @@ public class SoundElement {
                 builder.append("AudioClip : ");
                 builder.append("[Soure : ").append(soundClip.getSource()).append("]");
                 builder.append("[Volume : ").append(soundClip.getVolume()).append("]");
+                builder.append("[Volume2 : ").append(getVolume()).append("]");
                 builder.append("[Balance : ").append(soundClip.getBalance()).append("]");
                 builder.append("[CycleCount : ").append(soundClip.getCycleCount()).append("]");
                 builder.append("[HasSoundArea : ").append(hasSoundArea()).append("]");
@@ -280,6 +281,7 @@ public class SoundElement {
                 builder.append("Media : ");
                 builder.append("[Soure : ").append(soundMedia.getMedia().getSource()).append("]");
                 builder.append("[Volume : ").append(soundMedia.getVolume()).append("]");
+                builder.append("[Volume2 : ").append(getVolume()).append("]");
                 builder.append("[Balance : ").append(soundMedia.getBalance()).append("]");
                 builder.append("[CycleCount : ").append(soundMedia.getCycleCount()).append("]");
                 builder.append("[HasSoundArea : ").append(hasSoundArea()).append("]");

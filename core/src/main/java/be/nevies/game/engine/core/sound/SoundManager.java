@@ -88,6 +88,7 @@ public final class SoundManager {
             LOG.warn("For the name {} there is already a SoundElement in the map!", name);
             return;
         }
+        LOG.info("Added the sound : '{}', containing the SoundElement : {}", name, element);
         getInstance().soundMap.put(name, element);
     }
 

@@ -1,9 +1,10 @@
 package be.nevies.game.playground.four;
 
 import be.nevies.game.engine.core.general.GameController;
-import com.javafx.experiments.scenicview.ScenicView;
+import be.nevies.game.engine.core.sound.SoundManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.scenicview.ScenicView;
 
 /**
  * Play ground four is to test the tiled plugin.
@@ -21,10 +22,11 @@ public class PlayGroundFourLauncher extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
-        controller = new PlayGroundFour(60, 60, "PlayGroundFour");
+        controller = new PlayGroundFour(60, 30, "PlayGroundFour");
         controller.createGameScene(600, 600, stage);
         controller.initialise();
         controller.startGameUpdateTimeline();
+        controller.startSoundUpdateTimeline();
         ScenicView.show(stage.getScene());
         stage.show();
     }
@@ -40,5 +42,7 @@ public class PlayGroundFourLauncher extends Application {
     public void stop() throws Exception {
         super.stop();
         controller.stopGameUpdateTimeline();
+        controller.stopSoundUpdateTimeline();
+        SoundManager.getInstance().stopCollisionCheck();
     }
 }

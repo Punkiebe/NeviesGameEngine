@@ -24,6 +24,7 @@ import java.util.List;
 import javafx.scene.Group;
 import javafx.scene.shape.Rectangle;
 import javax.xml.bind.JAXBElement;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -35,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class TileLayerCreator {
 
     /* Logger. */
-    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(TileLayerCreator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TileLayerCreator.class);
 
     /**
      * Use this method to load your tmx map in to your game.
@@ -47,6 +48,7 @@ public class TileLayerCreator {
      */
     public static Group createGroupFromMap(Map map, File tmxFile) {
         Group mapGroup = new Group();
+        mapGroup.setId("TiledMapGroup");
 
         Collection<TileCollection> tileCollection = TileCollectionCreator.createTileCollectionsFromMap(map, tmxFile);
         List<Serializable> layerOrObjectgroupOrImagelayer = map.getLayerOrObjectgroupOrImagelayer();

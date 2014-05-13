@@ -56,7 +56,7 @@ public abstract class Element<T extends Node> extends Parent {
         this.addEventHandler(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
             @Override
             public void handle(GameEvent t) {
-                LOG.debug("Handle collision event for, source : {}, target : {}", t.getGameEventObject().getSource(), t.getGameEventObject().getTarget());
+                LOG.trace("Handle collision event for, source : {}, target : {}", t.getGameEventObject().getSource(), t.getGameEventObject().getTarget());
                 handleCollision(t);
             }
         });
