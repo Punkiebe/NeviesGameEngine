@@ -22,7 +22,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Extend your PropertiesHandler from this class, then the following things are
- * handled from the core module : <ul> <li>Add Behaviour to your element ('BehaviourClass')</li>
+ * handled from the core module : <ul> <li>Add Behaviour to your element
+ * ('BehaviourClass')</li>
  * <li>Add music to the SoundManager ('MusicSource')</li>
  * <li>Add passive elements to the CollisionManager('PassiveCollision')</li>
  * </ul>
@@ -64,9 +65,12 @@ public class DefaultPropertiesHandler implements PropertiesHandler {
     }
 
     /**
-     * @param element This element is used as the SoundArea for this music. Should be a class that extends 'Rectangle'!!
+     * @param element This element is used as the SoundArea for this music.
+     * Should be a class that extends 'Rectangle'!!
      * @param property The property with key 'MusicSource'.
-     * @param properties The other properties of this element. Could hold one of the following properties: 'MusicVolume', 'VolumeDistanceBased', 'BalanceDirectionBased'.
+     * @param properties The other properties of this element. Could hold one of
+     * the following properties: 'MusicVolume', 'VolumeDistanceBased',
+     * 'BalanceDirectionBased'.
      */
     private void handleMusicSource(Element element, PropertyType property, PropertiesType properties) {
         if (element == null) {
@@ -90,34 +94,36 @@ public class DefaultPropertiesHandler implements PropertiesHandler {
 
         SoundElement soundElement = new SoundElement(audio);
 
-        System.out.println(">> " + ((Rectangle) element.getNode()));
-
-        soundElement.setSoundArea((Rectangle) element.getNode());
-        soundElement.showSoundArea();
-        // TODO create a propertie for
-        soundElement.setVolumeDistanceBased(false);
-        soundElement.setBalanceDirectionBased(false);
-
         // Set default values
         soundElement.setVolume(1.0);
         soundElement.setBalance(1.0);
+        soundElement.setBalanceDirectionBased(false);
+        soundElement.setVolumeDistanceBased(false);
+
+        soundElement.setSoundArea((Rectangle) element.getNode());
+        soundElement.showSoundArea();
         
-        String volumeStr = TiledPluginUtil.getValueForKeyFromProperties(properties, "MusicVolume");
-        if (volumeStr != null && !"".equals(volumeStr)) {
-            try {
-                double volume = Double.parseDouble(volumeStr);
-                soundElement.setVolume(volume / 100);
-            } catch (NumberFormatException nfe) {
-                LOG.warn("The text in MusicVolume wasn't a number!!");
-            }
+        if (Boolean.TRUE.equals(TiledPluginUtil.getBooleanValueForKeyFromProperties(properties, "VolumeDistanceBased"))) {
+            soundElement.setVolumeDistanceBased(true);
         }
+
+        if (Boolean.TRUE.equals(TiledPluginUtil.getBooleanValueForKeyFromProperties(properties, "BalanceDistanceBased"))) {
+            soundElement.setBalanceDirectionBased(true);
+        }
+
+        Double volume = TiledPluginUtil.getDoubleValueForKeyFromProperties(properties, "MusicVolume");
+        if (volume != null) {
+            soundElement.setVolume(volume / 100);
+        }
+
         SoundManager.addSoundElement(element.getId(), soundElement);
     }
 
     /**
      * @param element The element where you want to add the behaviour to.
      * @param property The property with key 'BehaviourClass'.
-     * @param properties The other properties of this element. Should have a property with key 'BehaviourTypes'.
+     * @param properties The other properties of this element. Should have a
+     * property with key 'BehaviourTypes'.
      */
     private void handleBehaviourClass(Element element, PropertyType property, PropertiesType properties) {
         if (element == null) {

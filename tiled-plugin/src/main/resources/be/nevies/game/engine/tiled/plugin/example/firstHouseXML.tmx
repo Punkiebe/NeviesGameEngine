@@ -5052,6 +5052,7 @@
    <property name="Handler" value="be.nevies.game.engine.tiled.plugin.core.DefaultPropertiesHandler"/>
    <property name="MusicSource" value="/be/nevies/game/engine/tiled/plugin/example/music/classical_piano_music_track_mary_.mp3"/>
    <property name="MusicVolume" value="20"/>
+   <property name="VolumeDistanceBased" value="true"/>
   </properties>
   <object name="ChamberMusic" x="32" y="32" width="288" height="224"/>
   <object name="BureauMusic" x="352" y="32" width="416" height="224"/>

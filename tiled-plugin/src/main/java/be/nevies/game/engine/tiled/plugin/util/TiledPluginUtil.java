@@ -23,10 +23,11 @@ public class TiledPluginUtil {
 
     /**
      * Get the value for the given key from the properties.
-     * 
+     *
      * @param properties THe PropertiesType object that holds the properties.
      * @param key The key. It uses the 'equalsIgnoreCase'.
-     * @return The value for the key. It returns null if it was not found, or if one of the method arguments where null.
+     * @return The value for the key. It returns null if it was not found, or if
+     * one of the method arguments where null.
      */
     public static String getValueForKeyFromProperties(PropertiesType properties, String key) {
         if (properties == null) {
@@ -47,10 +48,11 @@ public class TiledPluginUtil {
 
     /**
      * Get the value as boolean for the given key from the properties.
-     * 
+     *
      * @param properties THe PropertiesType object that holds the properties.
      * @param key The key. It uses the 'equalsIgnoreCase'.
-     * @return The value for the key. It returns null if it was not found, or if one of the method arguments where null, or if the value wasn't a boolean.
+     * @return The value for the key. It returns null if it was not found, or if
+     * one of the method arguments where null, or if the value wasn't a boolean.
      */
     public static Boolean getBooleanValueForKeyFromProperties(PropertiesType properties, String key) {
         if (properties == null) {
@@ -70,6 +72,79 @@ public class TiledPluginUtil {
                     return false;
                 }
                 LOG.warn("The value '{}' for the key '{}' wasn't 'true' or 'false'!", value, key);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the value as Double for the given key from the properties.
+     *
+     * @param properties THe PropertiesType object that holds the properties.
+     * @param key The key. It uses the 'equalsIgnoreCase'.
+     * @return The value for the key. It returns null if it was not found, or if
+     * one of the method arguments where null, or if the value wasn't a double.
+     */
+    public static Double getDoubleValueForKeyFromProperties(PropertiesType properties, String key) {
+        if (properties == null) {
+            LOG.warn("You tried to get the value from an PropertiesType object that is null!!");
+            return null;
+        }
+        if (key == null || "".equals(key)) {
+            LOG.warn("You tried to get value from an empty key!!");
+            return null;
+        }
+        for (PropertyType prop : properties.getProperty()) {
+            if (key.equalsIgnoreCase(prop.getName())) {
+                String value = prop.getValue();
+                if (value != null && !"".equals(value)) {
+                    try {
+                        double doubleValue = Double.parseDouble(value);
+                        return doubleValue;
+                    } catch (NumberFormatException nfe) {
+                        LOG.warn("The value '{}' for the key '{}' wasn't a double!", value, key);
+                        return null;
+
+                    }
+                }
+                LOG.warn("The value '{}' for the key '{}' wasn't a double!", value, key);
+                return null;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Get the value as Long for the given key from the properties.
+     *
+     * @param properties THe PropertiesType object that holds the properties.
+     * @param key The key. It uses the 'equalsIgnoreCase'.
+     * @return The value for the key. It returns null if it was not found, or if
+     * one of the method arguments where null, or if the value wasn't a long.
+     */
+    public static Long getLongValueForKeyFromProperties(PropertiesType properties, String key) {
+        if (properties == null) {
+            LOG.warn("You tried to get the value from an PropertiesType object that is null!!");
+            return null;
+        }
+        if (key == null || "".equals(key)) {
+            LOG.warn("You tried to get value from an empty key!!");
+            return null;
+        }
+        for (PropertyType prop : properties.getProperty()) {
+            if (key.equalsIgnoreCase(prop.getName())) {
+                String value = prop.getValue();
+                if (value != null && !"".equals(value)) {
+                    try {
+                        long doubleValue = Long.parseLong(value);
+                        return doubleValue;
+                    } catch (NumberFormatException nfe) {
+                        LOG.warn("The value '{}' for the key '{}' wasn't a long!", value, key);
+                        return null;
+                    }
+                }
+                LOG.warn("The value '{}' for the key '{}' wasn't a long!", value, key);
                 return null;
             }
         }
