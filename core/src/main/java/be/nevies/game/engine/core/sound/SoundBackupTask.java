@@ -10,11 +10,11 @@ import javafx.concurrent.Task;
  *
  * @author drs
  */
-public class SoundTask extends Task<Void> {
+public class SoundBackupTask extends Task<Void> {
     
     private final SoundElement sound;
 
-    public SoundTask(SoundElement soundElement) {
+    public SoundBackupTask(SoundElement soundElement) {
         sound = soundElement;
     }
 
