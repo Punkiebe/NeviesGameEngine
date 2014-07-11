@@ -8,6 +8,8 @@ package be.nevies.game.engine.core.collision;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.Element;
+import java.time.LocalTime;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,7 +33,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author drs
  */
-public class CollisionTask extends Task<Map<Element, GameEventObject>> {
+public class CollisionTask extends Task<Void> {
 
     /* Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(CollisionTask.class);
@@ -43,18 +45,30 @@ public class CollisionTask extends Task<Map<Element, GameEventObject>> {
     private final Map<Element, Collection<Rectangle>> passiveMap;
 
     private final Map<Element, List<GameEvent>> fireMap;
+    
+    private final Map<Element, Collection<GameEventObject>> resultReturn;
 
+    /**
+     * Constructor of the CollisionTask object.
+     * 
+     * @param active List of active elements.
+     * @param passive List of passive elements.
+     * @param passiveBoundsMap The bounds map of the passive elements.
+     */
     public CollisionTask(List<Element> active, List<Element> passive, Map<Element, Collection<Rectangle>> passiveBoundsMap) {
         activeElements = active;
         passiveElements = passive;
         passiveMap = passiveBoundsMap;
         fireMap = new HashMap<>();
+        resultReturn = new HashMap<>();
     }
 
     @Override
-    protected Map<Element, GameEventObject> call() throws Exception {
-        LOG.trace("Start checking for collisions.");
-        Map<Element, GameEventObject> resultMap = new HashMap<>();
+    protected Void call() throws Exception {
+        LOG.trace("Start checking for collisions (task).");
+        LocalTime start = LocalTime.ofNanoOfDay(System.nanoTime());
+        long nanoTimeStart = System.nanoTime();
+       // Map<Element, GameEventObject> result = new HashMap<>();
         ArrayList<Element> activeIter = new ArrayList<>(activeElements);
         int totalActive = activeIter.size();
         int count = 0;
@@ -72,8 +86,8 @@ public class CollisionTask extends Task<Map<Element, GameEventObject>> {
 
                         addEventToFire(checkActive, new GameEvent(gameEventObject, checkActive, GameEvent.COLLISION_EVENT));
                         addEventToFire(checkAgainst, new GameEvent(gameEventObject, checkAgainst, GameEvent.COLLISION_EVENT));
-                        resultMap.put(checkActive, gameEventObject);
-                        resultMap.put(checkAgainst, gameEventObject);
+                        addGameEventObjectToResult(checkActive, gameEventObject);
+                        addGameEventObjectToResult(checkAgainst, gameEventObject);
                     }
                 }
             }
@@ -86,8 +100,8 @@ public class CollisionTask extends Task<Map<Element, GameEventObject>> {
                         GameEventObject gameEventObject = new GameEventObject(checkActive, checkAgainst, collision.getDirection());
                         addEventToFire(checkActive, new GameEvent(gameEventObject, checkActive, GameEvent.COLLISION_EVENT));
                         addEventToFire(checkAgainst, new GameEvent(gameEventObject, checkAgainst, GameEvent.COLLISION_EVENT));
-                        resultMap.put(checkActive, gameEventObject);
-                        resultMap.put(checkAgainst, gameEventObject);
+                        addGameEventObjectToResult(checkActive, gameEventObject);
+                        addGameEventObjectToResult(checkAgainst, gameEventObject);
                     }
                 }
             }
@@ -97,9 +111,17 @@ public class CollisionTask extends Task<Map<Element, GameEventObject>> {
                 break;
             }
         }
-        return resultMap;
+        LocalTime time = LocalTime.now().minusNanos(start.getNano());
+        LOG.debug("CollisionTask took : {}ns {}", System.nanoTime() - nanoTimeStart, time);
+        return null;
     }
 
+    /**
+     * Adds a GameEvent to the map to fire the events of later.
+     * 
+     * @param element The element.
+     * @param event The GameEvent.
+     */
     private void addEventToFire(Element element, GameEvent event) {
         if (!fireMap.containsKey(element)) {
             fireMap.put(element, new ArrayList<>());
@@ -107,10 +129,27 @@ public class CollisionTask extends Task<Map<Element, GameEventObject>> {
         fireMap.get(element).add(event);
     }
 
+    /**
+     * Adds a GameEventObject to the map 'resultReturn'.
+     * 
+     * @param element The element
+     * @param event The GameEventObject.
+     */
+    private void addGameEventObjectToResult(Element element, GameEventObject event) {
+        if (!resultReturn.containsKey(element)) {
+            resultReturn.put(element, new ArrayList<>());
+        }
+        resultReturn.get(element).add(event);
+    }
+
     @Override
     protected void succeeded() {
         super.succeeded();
-       // LOG.debug("Collision task done. Fire events. Number of events to fire : {}", fireMap.size());
+        synchronized (this) {
+            CollisionManager.getInstance().getResultMapLastCheck().clear();
+            CollisionManager.getInstance().getResultMapLastCheck().putAll(resultReturn);
+        }
+        LOG.debug("Collision task done. Fire events. Number of events to fire : {}", fireMap.size());
         fireMap.keySet().forEach(key -> fireMap.get(key).forEach(event -> key.fireEvent(event)));
     }
 

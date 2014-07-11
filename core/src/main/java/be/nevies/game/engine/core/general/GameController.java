@@ -76,7 +76,7 @@ public abstract class GameController {
                 new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(javafx.event.ActionEvent event) {
-                        getGameMainNode().fireEvent(new GameEvent(GameEvent.GAME_UPDATE_EVENT));
+                        //getGameMainNode().fireEvent(new GameEvent(GameEvent.GAME_UPDATE_EVENT));
                         handleGameUpdate();
                     }
                 });

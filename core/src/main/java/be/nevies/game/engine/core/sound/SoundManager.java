@@ -1,5 +1,6 @@
 package be.nevies.game.engine.core.sound;
 
+import be.nevies.game.engine.core.collision.CollisionUtil;
 import be.nevies.game.engine.core.general.Element;
 import be.nevies.game.engine.core.sound.SoundElement.Status;
 import be.nevies.game.engine.core.util.Direction;
@@ -173,7 +174,7 @@ public final class SoundManager {
             LOG.error("The main element needs to have collision bounds! Add at least one collision bound to your element!");
             return;
         }
-        soundCheckService.submit(new CheckForCollisionsTask(getInstance().mainElement.getCollisionBounds(), getInstance().soundMap.values()));
+        soundCheckService.submit(new SoundTask(getInstance().mainElement.getCollisionBounds(), getInstance().soundMap.values()));
     }
 
     /**
@@ -287,7 +288,7 @@ public final class SoundManager {
         if (recOne == null || recTwo == null) {
             throw new IllegalArgumentException("The rectangles can't be null!");
         }
-        double max = getMaximumDistance(recOne, recTwo);
+        double max = CollisionUtil.maximumDistanceForIntersectingRectangles(recOne, recTwo);
 
         if (max == distance) {
             return 0.0;
@@ -295,21 +296,6 @@ public final class SoundManager {
         double percent = (max - distance) / max;
         LOG.trace("Calculating percentage for distance. Max : {} , Distance : {} , Percentage : {}", max, distance, percent);
         return percent;
-    }
-
-    /**
-     * Get the maximum distance between two rectangles that intersect.
-     *
-     * @param recOne First rectangle.
-     * @param recTwo Second rectangle.
-     * @return The distance between them.
-     */
-    private static double getMaximumDistance(Rectangle recOne, Rectangle recTwo) {
-        Rectangle newOne = new Rectangle(0, 0, recOne.getWidth(), recOne.getHeight());
-        Rectangle newTwo = new Rectangle(recOne.getWidth(), recOne.getHeight(), recTwo.getWidth(), recTwo.getHeight());
-        Point2D centerOne = RectangleUtil.pointOnRectangle(newOne, Direction.CENTER);
-        Point2D centerTwo = RectangleUtil.pointOnRectangle(newTwo, Direction.CENTER);
-        return PositionUtil.getDistanceBetweenTwoPoints(centerOne, centerTwo);
     }
 
     /**

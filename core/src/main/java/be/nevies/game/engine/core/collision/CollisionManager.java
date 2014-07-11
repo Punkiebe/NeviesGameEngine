@@ -1,13 +1,7 @@
 package be.nevies.game.engine.core.collision;
 
-import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.Element;
-import be.nevies.game.engine.core.sound.SoundElement;
-import be.nevies.game.engine.core.sound.SoundManager;
-import static be.nevies.game.engine.core.sound.SoundManager.getInstance;
-import be.nevies.game.engine.core.util.Direction;
-import be.nevies.game.engine.core.util.PositionUtil;
 import be.nevies.game.engine.core.util.SingleExecutorService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,11 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
 import java.util.logging.Level;
-import javafx.concurrent.Task;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +32,9 @@ public final class CollisionManager {
     private List<Element> passiveElements;
     private Map<Element, Collection<Rectangle>> passiveMap;
     private static boolean checkingCollision = false;
-    private Map<Element, GameEventObject> resultMapLastCheck;
-    private static SingleExecutorService collisionCheckService;
+    // FIXME GameEventObject should be here a list, possible to have multiple events for one element
+    private final Map<Element, Collection<GameEventObject>> resultMapLastCheck;
+    private final SingleExecutorService collisionCheckService;
 
     private static CollisionTask currentTask;
 
@@ -55,6 +46,7 @@ public final class CollisionManager {
         passiveElements = new ArrayList<>();
         passiveMap = new HashMap<>();
         collisionCheckService = new SingleExecutorService();
+        resultMapLastCheck = new HashMap<>();
     }
 
     /**
@@ -115,7 +107,7 @@ public final class CollisionManager {
      * A static call to the checkForCollisions method.
      */
     public static void staticCheckForCollisions() {
-        getInstance().checkForCollisions();
+        getInstance().checkForCollisionServiceUse();
     }
 
     /**
@@ -129,33 +121,37 @@ public final class CollisionManager {
      * current active element that's being checked.
      */
     public void checkForCollisions() {
-        if (currentTask == null || currentTask.isCancelled()) {
-            CollisionTask task = new CollisionTask(getInstance().activeElements, getInstance().passiveElements, getInstance().passiveMap);
-            currentTask = task;
-            Thread thread = new Thread(task, "Collision Check Thread");
-            thread.setDaemon(false);
-            thread.start();
-        } else if (currentTask.isDone()) {
-            try {
-                getInstance().resultMapLastCheck = currentTask.get();
-                CollisionTask task = new CollisionTask(getInstance().activeElements, getInstance().passiveElements, getInstance().passiveMap);
-                currentTask = task;
-                Thread thread = new Thread(task, "Collision Check Thread");
-                thread.setDaemon(false);
-                thread.start();
-            } catch (InterruptedException | ExecutionException ex) {
-                java.util.logging.Logger.getLogger(CollisionManager.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            LOG.info("Current collision task still running, didn't start a new one.");
-        }
+//        if (currentTask == null || currentTask.isCancelled()) {
+//            CollisionTask task = new CollisionTask(getInstance().activeElements, getInstance().passiveElements, getInstance().passiveMap, getInstance().getResultMapLastCheck());
+//            currentTask = task;
+//            Thread thread = new Thread(task, "Collision Check Thread");
+//            thread.setDaemon(false);
+//            thread.start();
+//        } else if (currentTask.isDone()) {
+//            try {
+//               // getInstance().resultMapLastCheck = currentTask.get();
+//                CollisionTask task = new CollisionTask(getInstance().activeElements, getInstance().passiveElements, getInstance().passiveMap, getInstance().getResultMapLastCheck());
+//                currentTask = task;
+//                Thread thread = new Thread(task, "Collision Check Thread");
+//                thread.setDaemon(false);
+//                thread.start();
+//            } catch (Exception ex) {
+//                java.util.logging.Logger.getLogger(CollisionManager.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        } else {
+//            LOG.info("Current collision task still running, didn't start a new one.");
+//        }
+    }
+
+    public void checkForCollisionServiceUse() {
+        getInstance().collisionCheckService.submit(new CollisionTask(getInstance().activeElements, getInstance().passiveElements, getInstance().passiveMap));
     }
 
     /**
      * Stops collision checking.
      */
     public void stopCollisionCheck() {
-        collisionCheckService.shutdown();
+        getInstance().collisionCheckService.shutdown();
     }
 
 //    /**
@@ -270,26 +266,25 @@ public final class CollisionManager {
     /**
      * @return The result map of last check.
      */
-    private Map<Element, GameEventObject> getResultMapLastCheck() {
+    public Map<Element, Collection<GameEventObject>> getResultMapLastCheck() {
         return resultMapLastCheck;
     }
 
+//    /**
+//     * @param resultMapLastCheck The result map of last check.
+//     */
+//    private void setResultMapLastCheck(Map<Element, GameEventObject> resultMapLastCheck) {
+//        this.resultMapLastCheck = resultMapLastCheck;
+//    }
     /**
-     * @param resultMapLastCheck The result map of last check.
-     */
-    private void setResultMapLastCheck(Map<Element, GameEventObject> resultMapLastCheck) {
-        this.resultMapLastCheck = resultMapLastCheck;
-    }
-
-    /**
-     * Retrieve the game event object of last collision check for an element.
+     * Retrieve the game event objects of last collision check for an element.
      *
      * @param element The element.
-     * @return The game event object of the last collision, if there was a
+     * @return The game event objects of the last collision, if there was a
      * collision. Or null if there was in last check no collision for this
      * element.
      */
-    public static GameEventObject getGameEventForLastCollision(Element element) {
+    public static Collection<GameEventObject> getGameEventsForLastCollision(Element element) {
         return getInstance().getResultMapLastCheck().get(element);
     }
 
@@ -299,11 +294,14 @@ public final class CollisionManager {
      * content is printed out on the 'INFO' level.
      */
     public static void printContentResultMapLastCheck() {
-        Map<Element, GameEventObject> map = getInstance().getResultMapLastCheck();
+        Map<Element, Collection<GameEventObject>> map = getInstance().getResultMapLastCheck();
         LOG.info("------ ResultMapLastCheck ------");
         for (Element el : map.keySet()) {
-            GameEventObject eventObj = map.get(el);
-            LOG.info("The following element : {} has as last GameEventObject : {}.", el, eventObj);
+            LOG.info("Last events for the following element : {}", el);
+            Collection<GameEventObject> eventObjs = map.get(el);
+            for (GameEventObject eventObj : eventObjs) {
+                LOG.info(" - GameEventObject : {}.", eventObj);
+            }
         }
         LOG.info("--------------------------------");
     }
