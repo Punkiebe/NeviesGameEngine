@@ -1,5 +1,6 @@
 package be.nevies.game.playground.four;
 
+import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.sound.SoundManager;
 import javafx.application.Application;
@@ -27,15 +28,14 @@ public class PlayGroundFourLauncher extends Application {
         controller.initialise();
         controller.startGameUpdateTimeline();
         controller.startSoundUpdateTimeline();
-        ScenicView.show(stage.getScene());
+       // ScenicView.show(stage.getScene());
         stage.show();
     }
     
     public static void main(String[] args) {
         // Set so we see debug info also
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "trace");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
         launch(args);
-        
     }
     
     @Override
@@ -44,5 +44,6 @@ public class PlayGroundFourLauncher extends Application {
         controller.stopGameUpdateTimeline();
         controller.stopSoundUpdateTimeline();
         SoundManager.getInstance().stopCollisionCheck();
+        CollisionManager.getInstance().stopCollisionCheck();
     }
 }

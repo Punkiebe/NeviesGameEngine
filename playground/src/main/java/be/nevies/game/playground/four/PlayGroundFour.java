@@ -133,7 +133,7 @@ public class PlayGroundFour extends GameController {
         EventHandler movePlayerEvent = new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent t) {
-                System.out.println(">> event " + t);
+                LOG.trace("Scene event : {}", t);
                 switch (t.getCode()) {
                     case UP:
                         player.moveUp();
