@@ -8,13 +8,22 @@ package be.nevies.game.engine.core.collision;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.event.GameEventObject;
 import be.nevies.game.engine.core.general.Element;
+import java.time.Clock;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalField;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import javafx.concurrent.Task;
 import javafx.scene.shape.Rectangle;
 import org.slf4j.Logger;
@@ -66,7 +75,6 @@ public class CollisionTask extends Task<Void> {
     @Override
     protected Void call() throws Exception {
         LOG.trace("Start checking for collisions (task).");
-        LocalTime start = LocalTime.ofNanoOfDay(System.nanoTime());
         long nanoTimeStart = System.nanoTime();
        // Map<Element, GameEventObject> result = new HashMap<>();
         ArrayList<Element> activeIter = new ArrayList<>(activeElements);
@@ -111,8 +119,8 @@ public class CollisionTask extends Task<Void> {
                 break;
             }
         }
-        LocalTime time = LocalTime.now().minusNanos(start.getNano());
-        LOG.debug("CollisionTask took : {}ns {}", System.nanoTime() - nanoTimeStart, time);
+        LocalTime endTime = LocalTime.ofNanoOfDay(System.nanoTime() - nanoTimeStart);
+        LOG.debug("CollisionTask took : {}ns ({}ms) ({})", endTime.format(DateTimeFormatter.ofPattern("N")), endTime.format(DateTimeFormatter.ofPattern("A")), this);
         return null;
     }
 
@@ -143,14 +151,23 @@ public class CollisionTask extends Task<Void> {
     }
 
     @Override
-    protected void succeeded() {
+    protected synchronized void succeeded() {
         super.succeeded();
-        synchronized (this) {
+        //synchronized (this) {
             CollisionManager.getInstance().getResultMapLastCheck().clear();
             CollisionManager.getInstance().getResultMapLastCheck().putAll(resultReturn);
-        }
+        //}
         LOG.debug("Collision task done. Fire events. Number of events to fire : {}", fireMap.size());
-        fireMap.keySet().forEach(key -> fireMap.get(key).forEach(event -> key.fireEvent(event)));
+       // fireMap.keySet().forEach(key -> fireMap.get(key).forEach(event -> key.fireEvent(event)));
+        
+        
+        Set<Element> keySet = fireMap.keySet();
+        for (Element element : keySet) {
+            List<GameEvent> events = fireMap.get(element);
+            for (GameEvent gameEvent : events) {
+                element.fireEvent(gameEvent);
+            }
+        }
     }
 
     @Override

@@ -1,6 +1,8 @@
 package be.nevies.game.engine.core.general;
 
+import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.event.GameEvent;
+import be.nevies.game.engine.core.sound.SoundManager;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -48,8 +50,9 @@ public abstract class GameController {
     private final int soundUpdatesPerSecond;
 
     /**
-     * Constructor that will create the games main group node. It will also create the game update time line, but doesn't start it yet! It creates the Sound
-     * updates time line, but doesn't start it yet!
+     * Constructor that will create the games main group node. It will also
+     * create the game update time line, but doesn't start it yet! It creates
+     * the Sound updates time line, but doesn't start it yet!
      *
      * @param gups Game updates per second.
      * @param sups Sound updates per second.
@@ -101,14 +104,16 @@ public abstract class GameController {
     }
 
     /**
-     * Initialise the rest of your game. This method you need to call once the GameController is created.<br/> This method shouldn't call any object that only
-     * can be modified on the JavaFX Application Thread!
+     * Initialise the rest of your game. This method you need to call once the
+     * GameController is created.<br/> This method shouldn't call any object
+     * that only can be modified on the JavaFX Application Thread!
      */
     public abstract void initialise();
 
     /**
-     * Define all the input events that need to be attached to the scene.<br/> This is also called in the method 'createGameScene'. So normally there's no need
-     * to call this your self.
+     * Define all the input events that need to be attached to the scene.<br/>
+     * This is also called in the method 'createGameScene'. So normally there's
+     * no need to call this your self.
      */
     public abstract void defineSceneEvents(Scene scene);
 
@@ -127,7 +132,8 @@ public abstract class GameController {
     }
 
     /**
-     * Start the time line that calls the 'handleGameUpdate' and fires a GameEvent 'GAME_UPDATE_EVENT'.
+     * Start the time line that calls the 'handleGameUpdate' and fires a
+     * GameEvent 'GAME_UPDATE_EVENT'.
      */
     public void startGameUpdateTimeline() {
         gameUpdateTimeline.play();
@@ -207,19 +213,22 @@ public abstract class GameController {
     /**
      * The sets the current game loop for this game world.
      *
-     * @param gameLoop Timeline object of an animation running indefinitely representing the game loop.
+     * @param gameLoop Timeline object of an animation running indefinitely
+     * representing the game loop.
      */
     protected static void setGameLoop(Timeline gameLoop) {
         GameController.gameUpdateTimeline = gameLoop;
     }
 
     /**
-     * This creates the scene for the game, and if a stage is given it will add the scene tot the given stage. After creating the scene it calls also the
+     * This creates the scene for the game, and if a stage is given it will add
+     * the scene tot the given stage. After creating the scene it calls also the
      * 'defineScenEvents' method.
      *
      * @param widthWindow Width of the game window.
      * @param heightWindow Height of the game window.
-     * @param stage The stage of the game. If you give the stage here, then there's no need to call 'setGameStage' after.
+     * @param stage The stage of the game. If you give the stage here, then
+     * there's no need to call 'setGameStage' after.
      */
     public void createGameScene(double widthWindow, double heightWindow, Stage stage) {
         gameScene = new Scene(getGameMainNode(), widthWindow, heightWindow);
@@ -239,7 +248,8 @@ public abstract class GameController {
     }
 
     /**
-     * This will set a new scene for you game. This new scene is set to the game stage also.
+     * This will set a new scene for you game. This new scene is set to the game
+     * stage also.
      *
      * @param scene The game scene.
      */
@@ -255,7 +265,8 @@ public abstract class GameController {
     }
 
     /**
-     * The main node of your game. To this node you want to add all your game Elements.
+     * The main node of your game. To this node you want to add all your game
+     * Elements.
      *
      * @return The main node of type Group of your game.
      */
@@ -288,5 +299,18 @@ public abstract class GameController {
         gameStage = stage;
         gameStage.setScene(getGameScene());
         gameStage.setTitle(gameTitle);
+    }
+
+    /**
+     * Stops all the game and sound updates. This stops also the service of the
+     * collision and sound manager.
+     */
+    public void stop() {
+        this.stopGameUpdateTimeline();
+        this.stopSoundUpdateTimeline();
+        if (SoundManager.isInitialised()) {
+            SoundManager.getInstance().stopCollisionCheck();
+        }
+        CollisionManager.getInstance().stopCollisionCheck();
     }
 }

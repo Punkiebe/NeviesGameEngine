@@ -28,11 +28,10 @@ public final class CollisionManager {
     /* Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(CollisionManager.class);
     private static CollisionManager instance;
-    private List<Element> activeElements;
-    private List<Element> passiveElements;
+    private final List<Element> activeElements;
+    private final List<Element> passiveElements;
     private Map<Element, Collection<Rectangle>> passiveMap;
     private static boolean checkingCollision = false;
-    // FIXME GameEventObject should be here a list, possible to have multiple events for one element
     private final Map<Element, Collection<GameEventObject>> resultMapLastCheck;
     private final SingleExecutorService collisionCheckService;
 
@@ -267,7 +266,7 @@ public final class CollisionManager {
      * @return The result map of last check.
      */
     public Map<Element, Collection<GameEventObject>> getResultMapLastCheck() {
-        return resultMapLastCheck;
+        return getInstance().resultMapLastCheck;
     }
 
 //    /**
@@ -313,9 +312,9 @@ public final class CollisionManager {
     public static void printActiveElements() {
         LOG.info("--------- Active Elements ------");
         ArrayList<Element> activeIter = new ArrayList<>(getInstance().activeElements);
-        for (Element el : activeIter) {
+        activeIter.stream().forEach((el) -> {
             LOG.info("{}", el);
-        }
+        });
         LOG.info("--------------------------------");
     }
 
@@ -326,9 +325,9 @@ public final class CollisionManager {
     public static void printPassiveElements() {
         LOG.info("--------- Passive Elements ------");
         ArrayList<Element> passiveIter = new ArrayList<>(getInstance().passiveElements);
-        for (Element el : passiveIter) {
+        passiveIter.stream().forEach((el) -> {
             LOG.info("{}", el);
-        }
+        });
         LOG.info("--------------------------------");
     }
 }
