@@ -6,7 +6,6 @@ package be.nevies.game.playground.one;
 
 import be.nevies.game.engine.core.animation.PathElement;
 import be.nevies.game.engine.core.animation.SpriteAnimation;
-import be.nevies.game.engine.core.animation.SpriteAnimationBuilder;
 import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.general.Element;
@@ -34,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @author drs
  */
 public class PlayGroundOne extends GameController {
-    
+
     /* Logger. */
     private static final Logger LOG = LoggerFactory.getLogger(PlayGroundOne.class);
 
@@ -78,11 +77,13 @@ public class PlayGroundOne extends GameController {
 
         ImageView imageView = new ImageView("be/nevies/game/playground/one/images/george_0.png");
         final Sprite spriteGeorge = new Sprite(16, 4, 48, 48, imageView);
-        //SpriteAnimation build = SpriteAnimationBuilder.create(spriteGeorge).columns(1).totalNbrFrames(4).duration(Duration.seconds(5)).build();
-        //build.play();
-        SpriteAnimation build2 = SpriteAnimationBuilder.create(spriteGeorge).columns(1).totalNbrFrames(4).offsetX(48).duration(Duration.seconds(1)).build();
-        build2.setCycleCount(Timeline.INDEFINITE);
-        build2.play();
+
+        SpriteAnimation build1 = new SpriteAnimation(spriteGeorge);
+        build1.setAnimationColumns(1);
+        build1.setAnimationNbrFrames(4);
+        build1.setAnimationOffsetX(48);
+        build1.setCycleCount(Timeline.INDEFINITE);
+        build1.play();
 
         player.setLayoutX(90);
         player.setLayoutY(40);
@@ -185,14 +186,20 @@ public class PlayGroundOne extends GameController {
 //                System.out.println("Filter collision event : " + t.toString());
 //            }
 //        });
-        scene.addEventHandler(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
-            @Override
-            public void handle(GameEvent t) {
-               // LOG.debug("Game update event : start collision check");
-                // System.out.println("Game update event check collision : " + t.toString());
-                CollisionManager.staticCheckForCollisions();
-            }
-        });
-
+//        scene.addEventHandler(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
+//            @Override
+//            public void handle(GameEvent t) {
+//               // LOG.debug("Game update event : start collision check");
+//                // System.out.println("Game update event check collision : " + t.toString());
+//                CollisionManager.staticCheckForCollisions();
+//            }
+//        });
     }
+
+    @Override
+    protected void handleGameUpdate() {
+        super.handleGameUpdate(); //To change body of generated methods, choose Tools | Templates.
+        CollisionManager.staticCheckForCollisions();
+    }
+
 }

@@ -152,5 +152,6 @@ public class PlayGroundFour extends GameController {
             }
         };
         scene.setOnKeyPressed(movePlayerEvent);
+        scene.setOnKeyReleased(event -> player.stopAllAnimation());
     }
 }

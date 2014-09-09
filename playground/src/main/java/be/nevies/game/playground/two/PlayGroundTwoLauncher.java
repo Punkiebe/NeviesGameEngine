@@ -17,7 +17,7 @@ public class PlayGroundTwoLauncher extends Application {
     @Override
     public void init() throws Exception {
         super.init();
-        controller = new PlayGroundTwo(30, 30, "Play ground two. Atom all around.");
+        controller = new PlayGroundTwo(30, 30, "Play ground two. Atoms all around.");
         controller.initialise();
     }
     
@@ -32,6 +32,7 @@ public class PlayGroundTwoLauncher extends Application {
     }
 
     public static void main(String[] args) {
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "info");
         launch(args);
     }
     
@@ -40,7 +41,6 @@ public class PlayGroundTwoLauncher extends Application {
     public void stop() throws Exception {
         super.stop();
         System.out.println("Stop application");
-        controller.stopGameUpdateTimeline();
-        controller.stopSoundUpdateTimeline();
+        controller.stop();
     }
 }

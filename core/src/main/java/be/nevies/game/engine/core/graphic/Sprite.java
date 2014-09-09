@@ -100,8 +100,8 @@ public class Sprite extends Element<ImageView> {
      * Constructor for an image with one frame. This sets also the viewport of the image.
      *
      * @param image The image of your sprite.
-     * @param widthFrame The width of the image.
-     * @param heightFrame The height of the image.
+     * @param width The width of the image.
+     * @param height The height of the image.
      */
     public Sprite(ImageView image, double width, double height) {
         super(image);

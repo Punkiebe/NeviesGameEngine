@@ -41,48 +41,55 @@ public class PlayGroundTwo extends GameController {
                 .translateX(10)
                 .translateY(10)
                 .children(HBoxBuilder.create()
-                .spacing(5)
-                .children(new Label("Number of Particles: "), // show no. particles
-                NUM_SPRITES_FIELD).build(),
-                // button to build more spheres
-                ButtonBuilder.create()
-                .text("Regenerate")
-                .onMousePressed(new EventHandler() {
-            @Override
-            public void handle(Event arg0) {
-                generateManySpheres(10);
-            }
-        }).build(),
-                // button to freeze game loop
-                ButtonBuilder.create()
-                .text("Freeze/Resume")
-                .onMousePressed(new EventHandler() {
-            @Override
-            public void handle(Event arg0) {
-                switch (gameLoop.getStatus()) {
-                    case RUNNING:
-                        gameLoop.stop();
-                        break;
-                    case STOPPED:
-                        gameLoop.play();
-                        break;
-                }
-            }
-        }).build()).build(); // (VBox) stats on children
+                        .spacing(5)
+                        .children(new Label("Number of Particles: "), // show no. particles
+                                NUM_SPRITES_FIELD).build(),
+                        // button to build more spheres
+                        ButtonBuilder.create()
+                        .text("Regenerate")
+                        .onMousePressed(new EventHandler() {
+                            @Override
+                            public void handle(Event arg0) {
+                                generateManySpheres(10);
+                            }
+                        }).build(),
+                        // button to freeze game loop
+                        ButtonBuilder.create()
+                        .text("Freeze/Resume")
+                        .onMousePressed(new EventHandler() {
+                            @Override
+                            public void handle(Event arg0) {
+                                switch (gameLoop.getStatus()) {
+                                    case RUNNING:
+                                        gameLoop.stop();
+                                        break;
+                                    case STOPPED:
+                                        gameLoop.play();
+                                        break;
+                                }
+                            }
+                        }).build()).build(); // (VBox) stats on children
         MenuBox menu = new MenuBox(stats);
 
         // lay down the controls
         addElementToGameMainNode(menu);
 
-        getGameMainNode().addEventFilter(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
-            @Override
-            public void handle(GameEvent t) {
-                System.out.println("Filter game event : " + t.toString());
-                handleMoveAtoms();
-                CollisionManager.staticCheckForCollisions();
-                t.consume();
-            }
-        });
+//        getGameMainNode().addEventFilter(GameEvent.GAME_UPDATE_EVENT, new EventHandler<GameEvent>() {
+//            @Override
+//            public void handle(GameEvent t) {
+//                System.out.println("Filter game event : " + t.toString());
+//                handleMoveAtoms();
+//                CollisionManager.staticCheckForCollisions();
+//                t.consume();
+//            }
+//        });
+    }
+
+    @Override
+    protected void handleGameUpdate() {
+        super.handleGameUpdate(); //To change body of generated methods, choose Tools | Templates.
+        handleMoveAtoms();
+        CollisionManager.staticCheckForCollisions();
     }
 
     @Override

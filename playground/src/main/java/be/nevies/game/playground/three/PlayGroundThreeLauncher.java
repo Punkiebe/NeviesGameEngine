@@ -41,8 +41,6 @@ public class PlayGroundThreeLauncher extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
-        controller.stopGameUpdateTimeline();
-        controller.stopSoundUpdateTimeline();
-        SoundManager.getInstance().stopCollisionCheck();
+        controller.stop();
     }
 }

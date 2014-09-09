@@ -5,7 +5,6 @@
 package be.nevies.game.playground.one;
 
 import be.nevies.game.engine.core.general.GameController;
-import be.nevies.game.engine.core.sound.SoundManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -42,7 +41,6 @@ public class PlayGroundOneLauncher extends Application {
     public void stop() throws Exception {
         super.stop();
         System.out.println("Stop application");
-        playGroundOne.stopGameUpdateTimeline();
-        playGroundOne.stopSoundUpdateTimeline();
+        playGroundOne.stop();
     }
 }

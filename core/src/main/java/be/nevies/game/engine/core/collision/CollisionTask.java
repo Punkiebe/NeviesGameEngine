@@ -151,7 +151,7 @@ public class CollisionTask extends Task<Void> {
     }
 
     @Override
-    protected synchronized void succeeded() {
+    protected void succeeded() {
         super.succeeded();
         //synchronized (this) {
             CollisionManager.getInstance().getResultMapLastCheck().clear();
@@ -165,6 +165,7 @@ public class CollisionTask extends Task<Void> {
         for (Element element : keySet) {
             List<GameEvent> events = fireMap.get(element);
             for (GameEvent gameEvent : events) {
+                System.out.println(">> " + Thread.currentThread().getName());
                 element.fireEvent(gameEvent);
             }
         }

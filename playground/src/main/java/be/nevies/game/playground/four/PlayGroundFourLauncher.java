@@ -1,11 +1,8 @@
 package be.nevies.game.playground.four;
 
-import be.nevies.game.engine.core.collision.CollisionManager;
 import be.nevies.game.engine.core.general.GameController;
-import be.nevies.game.engine.core.sound.SoundManager;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.scenicview.ScenicView;
 
 /**
  * Play ground four is to test the tiled plugin.
@@ -41,9 +38,6 @@ public class PlayGroundFourLauncher extends Application {
     @Override
     public void stop() throws Exception {
         super.stop();
-        controller.stopGameUpdateTimeline();
-        controller.stopSoundUpdateTimeline();
-        SoundManager.getInstance().stopCollisionCheck();
-        CollisionManager.getInstance().stopCollisionCheck();
+        controller.stop();
     }
 }
