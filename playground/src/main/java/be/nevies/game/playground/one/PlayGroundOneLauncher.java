@@ -33,7 +33,7 @@ public class PlayGroundOneLauncher extends Application {
     
     public static void main(String[] args) {
         // Set so we see debug info also
-        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "debug");
+        System.setProperty("org.slf4j.simpleLogger.defaultLogLevel", "error");
         launch(args);
     }
     

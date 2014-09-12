@@ -4,18 +4,18 @@
  */
 package be.nevies.game.playground.one;
 
-import be.nevies.game.engine.core.animation.PathElement;
 import be.nevies.game.engine.core.animation.SpriteAnimation;
 import be.nevies.game.engine.core.collision.CollisionManager;
+import be.nevies.game.engine.core.collision.CollisionUtil;
 import be.nevies.game.engine.core.event.GameEvent;
 import be.nevies.game.engine.core.general.Element;
 import be.nevies.game.engine.core.general.GameController;
 import be.nevies.game.engine.core.graphic.Sprite;
-import be.nevies.game.engine.core.collision.CollisionUtil;
 import be.nevies.game.engine.core.util.Direction;
+import javafx.animation.ParallelTransition;
 import javafx.animation.PathTransition;
-import javafx.animation.PathTransitionBuilder;
 import javafx.animation.Timeline;
+import javafx.animation.Transition;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -78,12 +78,26 @@ public class PlayGroundOne extends GameController {
         ImageView imageView = new ImageView("be/nevies/game/playground/one/images/george_0.png");
         final Sprite spriteGeorge = new Sprite(16, 4, 48, 48, imageView);
 
-        SpriteAnimation build1 = new SpriteAnimation(spriteGeorge);
-        build1.setAnimationColumns(1);
-        build1.setAnimationNbrFrames(4);
-        build1.setAnimationOffsetX(48);
-        build1.setCycleCount(Timeline.INDEFINITE);
-        build1.play();
+        SpriteAnimation leftWalkAnim = new SpriteAnimation(spriteGeorge);
+        leftWalkAnim.setAnimationColumns(1);
+        leftWalkAnim.setAnimationNbrFrames(4);
+        leftWalkAnim.setAnimationOffsetX(48);
+        leftWalkAnim.setCycleCount(Timeline.INDEFINITE);
+        SpriteAnimation rightWalkAnim = new SpriteAnimation(spriteGeorge);
+        rightWalkAnim.setAnimationColumns(1);
+        rightWalkAnim.setAnimationNbrFrames(4);
+        rightWalkAnim.setAnimationOffsetX(144);
+        rightWalkAnim.setCycleCount(Timeline.INDEFINITE);
+        SpriteAnimation upWalkAnim = new SpriteAnimation(spriteGeorge);
+        upWalkAnim.setAnimationColumns(1);
+        upWalkAnim.setAnimationNbrFrames(4);
+        upWalkAnim.setAnimationOffsetX(96);
+        upWalkAnim.setCycleCount(Timeline.INDEFINITE);
+        SpriteAnimation downWalkAnim = new SpriteAnimation(spriteGeorge);
+        downWalkAnim.setAnimationColumns(1);
+        downWalkAnim.setAnimationNbrFrames(4);
+        downWalkAnim.setAnimationOffsetX(0);
+        downWalkAnim.setCycleCount(Timeline.INDEFINITE);
 
         player.setLayoutX(90);
         player.setLayoutY(40);
@@ -95,26 +109,58 @@ public class PlayGroundOne extends GameController {
 
         CollisionManager.addActiveElement(spriteGeorge);
 
-        PathElement pathEl = new PathElement(new Path(new MoveTo(400, 200)), getGameMainNode());
-        pathEl.addPathElement(new LineTo(200, 200));
-        pathEl.getNode().setStroke(Color.BLUE);
-        pathEl.getNode().getStrokeDashArray().setAll(5d, 5d);
+        Path leftPath = new Path();
+        leftPath.getElements().add(new MoveTo(400, 200));
+        leftPath.getElements().add(new LineTo(200, 200));
+        leftPath.setStroke(Color.BLUE);
+        leftPath.getStrokeDashArray().addAll(5d, 5d);
+        // Only needed if you want to show the path
+        getGameMainNode().getChildren().add(leftPath);
+        
+        PathTransition leftWalkPath = new PathTransition(Duration.seconds(10), leftPath);
+        
+        ParallelTransition leftWalkGroup = new ParallelTransition(spriteGeorge);
+        leftWalkGroup.getChildren().add(leftWalkAnim);
+        leftWalkGroup.getChildren().add(leftWalkPath);
+        leftWalkGroup.play();
+        
+//        PathElement pathEl = new PathElement(new Path(new MoveTo(400, 200)), getGameMainNode());
+//        pathEl.getNode().setStroke(Color.BLUE);
+//        pathEl.getNode().getStrokeDashArray().setAll(5d, 5d);
 
-        final PathTransition pathTransition = PathTransitionBuilder.create()
-                .duration(Duration.seconds(10))
-                .path(pathEl.getNode())
-                .node(spriteGeorge)
-                .orientation(PathTransition.OrientationType.NONE)
-                .cycleCount(1)
-                .autoReverse(true)
-                .build();
-        pathTransition.play();
+//        final PathTransition pathTransition = PathTransitionBuilder.create()
+//                .duration(Duration.seconds(10))
+//                .path(path)
+//                .node(spriteGeorge)
+//                .orientation(PathTransition.OrientationType.NONE)
+//                .cycleCount(3)
+//                .autoReverse(true)
+//                .interpolator(Interpolator.LINEAR)
+//                .build();
+//        pathTransition.currentRateProperty().addListener(new ChangeListener<Number>() {
+//
+//            @Override
+//            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//                leftWalk.stop();
+//                rightWalk.stop();
+//                System.out.println(">>>> changed rate : " + oldValue + " -> " + newValue);
+//                if (newValue.equals(1.0)) {
+//                    leftWalk.play();
+//                } else if (newValue.equals(-1.0)) {
+//                    rightWalk.play();
+//                } else {
+//                    leftWalk.stop();
+//                    rightWalk.stop();
+//                }
+//            }
+//        });
+//        pathTransition.play();
 
         spriteGeorge.addEventHandler(GameEvent.COLLISION_EVENT, new EventHandler<GameEvent>() {
             @Override
             public void handle(GameEvent t) {
                 LOG.debug("Handle collision event sprite george : {}.", t);
-                handleGeorge(pathTransition, Direction.LEFT, spriteGeorge);
+                handleGeorge(leftWalkGroup, Direction.LEFT, spriteGeorge);
             }
         });
 
@@ -139,7 +185,7 @@ public class PlayGroundOne extends GameController {
         addElementToGameMainNode(player);
     }
 
-    private static void handleGeorge(final PathTransition path, final Direction direction, Sprite george) {
+    private static void handleGeorge(final Transition path, final Direction direction, Sprite george) {
         if (!CollisionUtil.checkBeforeMove(george, direction)) {
             path.stop();
         }
